@@ -1,0 +1,29 @@
+{
+  "name": "pfc",
+  "version": "1.0.0",
+  "description": "This will be my pfc for the dual web development Certificate of Higher Education ",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mikiPP/PFC-Sprint-Organizer.git"
+  },
+  "author": "mikiPP",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mikiPP/PFC-Sprint-Organizer/issues"
+  },
+  "homepage": "https://github.com/mikiPP/PFC-Sprint-Organizer#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
+    "express": "^4.17.1",
+    "mocha": "^7.1.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
+  }
+}
