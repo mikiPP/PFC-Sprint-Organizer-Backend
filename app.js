@@ -4,7 +4,8 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const companyRoutes = require('./Routes/company');
+const monogoConect = require('./Util/database').mongoConect;
+const companyRoutes = require('./Routes/companyRoutes');
 
 const app = express();
 
@@ -15,4 +16,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/company', companyRoutes);
 
-server.listen(8080);
+monogoConect(() => {
+  app.listen(8080);
+});
