@@ -7,7 +7,7 @@ const { addCompany } = require('../Controllers/companyController');
 const router = express.Router();
 
 // TODO: ADD THE REAL ROUTE
-router.get('/', getCompany);
+router.get('/:companyId', getCompany);
 
 router.post('/', bodyParser, addCompany);
 

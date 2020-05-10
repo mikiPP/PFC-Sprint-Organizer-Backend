@@ -1,7 +1,27 @@
 const Company = require('../Models/company');
 
-module.exports.getCompany = (req, res, next) => {
-  res.send('<h1>Hello from Express!</h1>');
+module.exports.getCompany = async (req, res, next) => {
+  const { companyId } = req.params;
+
+  try {
+    const company = await Company.findById(companyId);
+
+    if (!company) {
+      const error = new Error(
+        `Coudnt not find Company by the id: ${companyId}`
+      );
+      error.statusCode = 404;
+      throw error;
+    }
+
+    res.status(200).json({ message: 'Company have been fetched', company });
+    return company;
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
 };
 
 module.exports.addCompany = async (req, res, next) => {

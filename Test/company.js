@@ -1,9 +1,9 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-const { Schema } = require('mongoose');
 
 const Company = require('../Models/company');
 const companyController = require('../Controllers/companyController');
+const res = require('../Util/utils').fakeController.req;
 
 describe('Company Controller - CRUD', function() {
   it('Test if company is saved successfully !', function(done) {
@@ -19,17 +19,6 @@ describe('Company Controller - CRUD', function() {
       body: { name: 'Test' },
     };
 
-    const res = {
-      statusCode: 500,
-      status(code) {
-        this.statusCode = code;
-        return this;
-      },
-      json(data) {
-        return data;
-      },
-    };
-
     expect(
       companyController
         .addCompany(req, res, () => {})
@@ -38,6 +27,32 @@ describe('Company Controller - CRUD', function() {
           expect(result).to.have.property('disabled');
           expect(res.statusCode).to.equal(201);
           Company.prototype.save.restore();
+          done();
+        })
+    );
+  });
+
+  it('Test if company is fetched successfully !', function(done) {
+    sinon.stub(Company, 'findOne');
+
+    Company.findOne.returns({
+      name: 'test',
+      disabled: false,
+      _id: '1',
+    });
+
+    const req = {
+      params: { companyId: 1 },
+    };
+
+    expect(
+      companyController
+        .getCompany(req, res, () => {})
+        .then(result => {
+          expect(result).to.have.property('name');
+          expect(result).to.have.property('disabled');
+          expect(res.statusCode).to.equal(200);
+          Company.findOne.restore();
           done();
         })
     );
