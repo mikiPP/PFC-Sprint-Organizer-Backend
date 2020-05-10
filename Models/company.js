@@ -1,18 +1,10 @@
-const { getDb } = require('../Util/database');
+const mongoose = require('mongoose');
 
-class Company {
-  constructor(name) {
-    this.name = name;
-  }
+const { Schema } = mongoose;
 
-  save() {
-    const db = getDb();
-    return db
-      .collection('Company')
-      .insertOne(this)
-      .then(result => console.log(result))
-      .catch(err => console.error(err));
-  }
-}
+const companySchema = new Schema({
+  name: { type: String, required: true },
+  disabled: { type: Boolean, default: false, required: true },
+});
 
-module.exports = Company;
+module.exports = mongoose.model('Company', companySchema);
