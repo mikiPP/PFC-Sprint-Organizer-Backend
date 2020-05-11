@@ -4,7 +4,7 @@
   "description": "This will be my pfc for the dual web development Certificate of Higher Education ",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha Test --timeout 5000",
     "start": "nodemon app.js"
   },
   "repository": {
@@ -22,7 +22,9 @@
     "chai": "^4.2.0",
     "express": "^4.17.1",
     "mocha": "^7.1.2",
-    "mongodb": "^3.5.7"
+    "mongodb": "^3.5.7",
+    "mongoose": "^5.9.13",
+    "sinon": "^9.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.3"
