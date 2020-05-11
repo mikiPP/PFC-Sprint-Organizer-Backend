@@ -21,6 +21,7 @@ module.exports.getCompany = async (req, res, next) => {
       err.statusCode = 500;
     }
     next(err);
+    return err;
   }
 };
 
@@ -35,16 +36,59 @@ module.exports.addCompany = async (req, res, next) => {
       throw error;
     }
 
-    res
-      .status(201)
-      .json({ message: 'Company created!', companyId: result._id });
-
+    res.status(201).json({ message: 'Company created!', company: result });
     return result;
   } catch (err) {
+    console.log('works');
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
     return err;
   }
+};
+
+module.exports.updateCompany = (req, res, next) => {
+  const { companyId } = req.params;
+  const updatedName = req.body.name;
+  const updatedDisabled = req.body.disabled;
+
+  Company.findById(companyId)
+    .then(company => {
+      company.name = updatedName;
+      company.disabled = updatedDisabled;
+
+      return company.save();
+    })
+    .then(result => {
+      res.status(201).json({ message: 'Company updated!', company: result });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      err.message = `The company has not been updated`;
+      next(err);
+    });
+};
+
+module.exports.deleteCompany = (req, res, next) => {
+  const { companyId } = req.params;
+
+  Company.findByIdAndDelete(companyId)
+    .then(result => {
+      res
+        .status(200)
+        .json({ message: `Company with id: ${companyId} has been deleted` });
+    })
+    .catch(err => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+
+      err.message = `The company with id: ${companyId} has not been deleted`;
+      next(err);
+      return err;
+    });
 };
