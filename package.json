@@ -4,7 +4,7 @@
   "description": "This will be my pfc for the dual web development Certificate of Higher Education ",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 5000",
+    "test": "mocha Test --timeout 5000",
     "start": "nodemon app.js"
   },
   "repository": {
