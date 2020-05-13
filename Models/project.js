@@ -18,7 +18,7 @@ const porjectSchema = new Schema({
     default: false,
   },
 
-  company: {
+  companyId: {
     type: Schema.Types.ObjectId,
     ref: 'Company',
     required: true,

@@ -3,9 +3,10 @@ const Project = require('../Models/project');
 exports.addProject = async (req, res, next) => {
   const { name } = req.body;
   const { scrumMaster } = req.body;
+  const { disabled } = req.body;
   const { companyId } = req.body;
 
-  const project = new Project({ name, scrumMaster, companyId });
+  const project = new Project({ name, scrumMaster, disabled, companyId });
 
   try {
     const result = await project.save();
