@@ -1,20 +1,16 @@
-// const http = require('http');
-const path = require('path');
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const companyRoutes = require('./Routes/companyRoutes');
+const projectRoutes = require('./Routes/projectRoutes');
 
 const app = express();
 
-// const server = http.createServer(app);
+app.use(bodyParser.json());
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/company', companyRoutes);
+app.use('/company', companyRoutes, bodyParser);
+app.use('/project', projectRoutes, bodyParser);
 
 mongoose
   .connect(

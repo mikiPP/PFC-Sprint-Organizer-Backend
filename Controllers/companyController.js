@@ -1,6 +1,6 @@
 const Company = require('../Models/company');
 
-module.exports.getCompany = async (req, res, next) => {
+exports.getCompany = async (req, res, next) => {
   const { companyId } = req.params;
 
   try {
@@ -25,10 +25,9 @@ module.exports.getCompany = async (req, res, next) => {
   }
 };
 
-module.exports.addCompany = async (req, res, next) => {
-  const company = new Company({ name: req.body.name });
-
+exports.addCompany = async (req, res, next) => {
   try {
+    const company = new Company({ name: req.body.name });
     const result = await company.save();
     if (!result) {
       const error = new Error('The company has not been created');
@@ -39,7 +38,6 @@ module.exports.addCompany = async (req, res, next) => {
     res.status(201).json({ message: 'Company created!', company: result });
     return result;
   } catch (err) {
-    console.log('works');
     if (!err.statusCode) {
       err.statusCode = 500;
     }
@@ -48,7 +46,7 @@ module.exports.addCompany = async (req, res, next) => {
   }
 };
 
-module.exports.updateCompany = (req, res, next) => {
+exports.updateCompany = (req, res, next) => {
   const { companyId } = req.params;
   const updatedName = req.body.name;
   const updatedDisabled = req.body.disabled;
@@ -73,7 +71,7 @@ module.exports.updateCompany = (req, res, next) => {
     });
 };
 
-module.exports.deleteCompany = (req, res, next) => {
+exports.deleteCompany = (req, res, next) => {
   const { companyId } = req.params;
 
   Company.findByIdAndDelete(companyId)

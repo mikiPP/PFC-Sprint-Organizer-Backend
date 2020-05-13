@@ -1,19 +1,15 @@
 const express = require('express');
-const bodyParser = require('body-parser').json();
 
-const { getCompany } = require('../Controllers/companyController');
-const { addCompany } = require('../Controllers/companyController');
-const { updateCompany } = require('../Controllers/companyController');
-const { deleteCompany } = require('../Controllers/companyController');
+const companyController = require('../Controllers/companyController');
 
 const router = express.Router();
 
-router.get('/:companyId', getCompany);
+router.get('/:companyId', companyController.getCompany);
 
-router.post('/', bodyParser, addCompany);
+router.post('/', companyController.addCompany);
 
-router.post('/:companyId', bodyParser, updateCompany);
+router.post('/:companyId', companyController.updateCompany);
 
-router.delete('/:companyId', bodyParser, deleteCompany);
+router.delete('/:companyId', companyController.deleteCompany);
 
 module.exports = router;
