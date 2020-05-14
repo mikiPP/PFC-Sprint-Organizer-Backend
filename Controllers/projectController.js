@@ -82,7 +82,40 @@ exports.updateProject = (req, res, next) => {
         res.status(201).json({ message: 'Project updated!', project: result });
       })
       .catch(err => {
-        console.log('error happend catch');
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        return next(err);
+      });
+  } else {
+    const error = new Error(`this id: ${projectId} is invalid!`);
+    error.statusCode = 422;
+    res.statusCode = 422; // just for testing
+    return next(error);
+  }
+};
+
+exports.deleteProject = (req, res, next) => {
+  const { projectId } = req.params;
+
+  if (mongoose.Types.ObjectId.isValid(projectId)) {
+    // console.log(Project.findByIdAndDelete());
+    Project.findByIdAndDelete(projectId)
+      .then(result => {
+        if (result) {
+          res.status(200).json({
+            message: `project with id: ${projectId} has been deleted`,
+          });
+          return;
+        }
+        const error = new Error(
+          `Project with id: ${projectId} has not been found!`
+        );
+        error.statusCode = 404;
+        throw error;
+      })
+      .catch(err => {
+        console.log('Here?');
         if (!err.statusCode) {
           err.statusCode = 500;
         }

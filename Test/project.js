@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+const mongoose = require('mongoose');
 
 const Project = require('../Models/project');
 const projectController = require('../Controllers/projectController');
@@ -74,7 +75,7 @@ describe('Project Controller - CRUD', function() {
     });
 
     const req = {
-      params: { projectId: 1 },
+      params: { projectId: '5ebc27837f1a751880863eac' },
       body: {
         name: 'testUpdated',
         scrumMaster: 'testUpdated',
@@ -104,6 +105,26 @@ describe('Project Controller - CRUD', function() {
           done();
         })
     );
+  });
+
+  it('if the given project id does exist delete should return status of  200 !', function() {
+    sinon.stub(Project, 'findByIdAndDelete');
+
+    Project.findByIdAndDelete.returns(
+      new Promise((resolve, reject) => resolve(true))
+    );
+
+    const req = {
+      params: { projectId: '5ebc2625859bcf086cb4600d' },
+    };
+
+    projectController.deleteProject(req, res, () => {});
+    expect(Project.findByIdAndDelete).not.to.throw();
+    expect(res.statusCode).to.equal(200);
+
+    Project.findByIdAndDelete.restore();
+
+    res.statusCode = 500;
   });
 });
 
@@ -150,7 +171,10 @@ describe('Project Controller - ERROR HANDLER', function() {
     );
   });
 
-  it('if the id given to update the project does no exists should return an error and status of 500', function() {
+  it('if the id given to update the project does no exists or is invalid should return an error and status of 4xx', function() {
+    sinon.stub(mongoose.Types.ObjectId, 'isValid');
+    mongoose.Types.ObjectId.isValid.returns(false);
+
     const req = {
       params: { projectId: 1 },
       body: {
@@ -164,5 +188,20 @@ describe('Project Controller - ERROR HANDLER', function() {
     projectController.updateProject(req, res, () => {});
     expect(projectController.updateProject).to.throw();
     expect(res.status).to.not.equal(200);
+    mongoose.Types.ObjectId.isValid.restore();
+  });
+
+  it('if the id given to delete the project does no exists or is invalid should return an error and status of 4xx', function() {
+    sinon.stub(mongoose.Types.ObjectId, 'isValid');
+    mongoose.Types.ObjectId.isValid.returns(false);
+
+    const req = {
+      params: { projectId: 1 },
+    };
+
+    projectController.deleteProject(req, res, () => {});
+    expect(projectController.deleteProject).to.throw();
+    expect(res.statusCode).to.not.equal(200);
+    mongoose.Types.ObjectId.isValid.restore();
   });
 });
