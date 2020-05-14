@@ -1,3 +1,5 @@
+const mongoose = require('mongoose');
+
 const Project = require('../Models/project');
 
 exports.getProjectById = async (req, res, next) => {
@@ -48,5 +50,48 @@ exports.addProject = async (req, res, next) => {
     }
     next(err);
     return err;
+  }
+};
+
+exports.updateProject = (req, res, next) => {
+  const { projectId } = req.params;
+
+  const { name } = req.body;
+  const { scrumMaster } = req.body;
+  const { disabled } = req.body;
+  const { companyId } = req.body;
+
+  if (mongoose.Types.ObjectId.isValid(projectId)) {
+    Project.findById(projectId)
+      .then(project => {
+        if (project) {
+          project.name = name;
+          project.scrumMaster = scrumMaster;
+          project.disabled = disabled;
+          project.companyId = companyId;
+
+          return project.save();
+        }
+        const error = new Error(
+          `Project with id: ${projectId} has not been found!`
+        );
+        error.statusCode = 404;
+        throw error;
+      })
+      .then(result => {
+        res.status(201).json({ message: 'Project updated!', project: result });
+      })
+      .catch(err => {
+        console.log('error happend catch');
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        return next(err);
+      });
+  } else {
+    const error = new Error(`this id: ${projectId} is invalid!`);
+    error.statusCode = 422;
+    res.statusCode = 422; // just for testing
+    return next(error);
   }
 };

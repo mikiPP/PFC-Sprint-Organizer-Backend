@@ -60,6 +60,51 @@ describe('Project Controller - CRUD', function() {
         })
     );
   });
+
+  it('Project successfully updated should return the project updated and status of 200', function(done) {
+    sinon.stub(Project, 'findById');
+    sinon.stub(Project.prototype, 'save');
+
+    Project.findById.returns(project);
+    Project.prototype.save({
+      name: 'testUpdated',
+      scrumMaster: 'testUpdated',
+      disabled: true,
+      companyId: '2',
+    });
+
+    const req = {
+      params: { projectId: 1 },
+      body: {
+        name: 'testUpdated',
+        scrumMaster: 'testUpdated',
+        disabled: true,
+        companyId: '2',
+      },
+    };
+
+    res.project = {
+      name: 'testUpdated',
+      scrumMaster: 'testUpdated',
+      disabled: true,
+      companyId: '2',
+    };
+
+    expect(
+      projectController
+        .getProjectById(req, res, () => {})
+        .then(result => {
+          expect(res.project.name).to.not.equal(project.name);
+          expect(res.project.scrumMaster).to.not.equal(project.scrumMaster);
+          expect(res.project.disabled).to.not.equal(project.disabled);
+          expect(res.project.companyId).to.not.equal(project.companyId);
+          expect(res.statusCode).to.equal(200);
+          Project.findById.restore();
+          Project.prototype.save.restore();
+          done();
+        })
+    );
+  });
 });
 
 describe('Project Controller - ERROR HANDLER', function() {
@@ -103,5 +148,21 @@ describe('Project Controller - ERROR HANDLER', function() {
           done();
         })
     );
+  });
+
+  it('if the id given to update the project does no exists should return an error and status of 500', function() {
+    const req = {
+      params: { projectId: 1 },
+      body: {
+        name: 'testUpdated',
+        scrumMaster: 'testUpdated',
+        disabled: true,
+        companyId: '2',
+      },
+    };
+
+    projectController.updateProject(req, res, () => {});
+    expect(projectController.updateProject).to.throw();
+    expect(res.status).to.not.equal(200);
   });
 });
