@@ -1,5 +1,5 @@
 module.exports.fakeController = {
-  req: {
+  res: {
     statusCode: 500,
     status(code) {
       this.statusCode = code;
