@@ -12,6 +12,27 @@ app.use(bodyParser.json());
 app.use('/company', companyRoutes, bodyParser);
 app.use('/project', projectRoutes, bodyParser);
 
+app.use((req, res, next) => {
+  res.setHeader('Acess-Controll-Allow-Origin', '*');
+  res.setHeader(
+    'Acess-Controll-Allow-Methods',
+    'GET, POST, PUT, PATCH, DELETE'
+  );
+  res.setHeader('Acess-Controll-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+app.use('/company', companyRoutes);
+app.use('/project', projectRoutes);
+
+app.use((error, req, res, next) => {
+  console.log(error);
+  const status = error.statusCode || 500;
+  const { message } = error;
+  const { data } = error;
+  res.status(status).json({ message, data });
+});
+
 mongoose
   .connect(
     'mongodb+srv://node:XGeSsA5LgqKV8%23D@cluster0-zpnkm.mongodb.net/test?retryWrites=true&w=majority',

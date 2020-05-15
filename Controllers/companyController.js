@@ -1,9 +1,10 @@
 const Company = require('../Models/company');
+const checkIfIdIsValid = require('../Util/utils').checkIfIdIsValid;
 
-exports.getCompany = async (req, res, next) => {
-  const { companyId } = req.params;
-
+module.exports.getCompany = async (req, res, next) => {
   try {
+    const { companyId } = req.params;
+
     const company = await Company.findById(companyId);
 
     if (!company) {
@@ -51,12 +52,20 @@ exports.updateCompany = (req, res, next) => {
   const updatedName = req.body.name;
   const updatedDisabled = req.body.disabled;
 
+  checkIfIdIsValid(companyId,res,next);
   Company.findById(companyId)
     .then(company => {
+      if(company){
       company.name = updatedName;
       company.disabled = updatedDisabled;
 
       return company.save();
+      }
+      const error = new Error(
+        `Project with id: ${companyId} has not been found!`
+      );
+      error.statusCode = 404;
+      throw error;
     })
     .then(result => {
       res.status(201).json({ message: 'Company updated!', company: result });
@@ -65,8 +74,6 @@ exports.updateCompany = (req, res, next) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
-
-      err.message = `The company has not been updated`;
       next(err);
     });
 };
@@ -74,18 +81,24 @@ exports.updateCompany = (req, res, next) => {
 exports.deleteCompany = (req, res, next) => {
   const { companyId } = req.params;
 
+  checkIfIdIsValid(companyId,res,next);
   Company.findByIdAndDelete(companyId)
-    .then(result => {
+    .then(company => {
+      if(company){
       res
         .status(200)
         .json({ message: `Company with id: ${companyId} has been deleted` });
+      }
+      const error = new Error(
+        `Project with id: ${companyId} has not been found!`
+      );
+      error.statusCode = 404;
+      throw error;
     })
     .catch(err => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
-
-      err.message = `The company with id: ${companyId} has not been deleted`;
       next(err);
       return err;
     });

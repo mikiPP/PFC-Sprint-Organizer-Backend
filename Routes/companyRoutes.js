@@ -8,7 +8,7 @@ router.get('/:companyId', companyController.getCompany);
 
 router.post('/', companyController.addCompany);
 
-router.post('/:companyId', companyController.updateCompany);
+router.put('/:companyId', companyController.updateCompany);
 
 router.delete('/:companyId', companyController.deleteCompany);
 
