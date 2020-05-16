@@ -1,5 +1,6 @@
 const Company = require('../Models/company');
-const checkIfIdIsValid = require('../Util/utils').checkIfIdIsValid;
+const Project = require('../Models/project');
+const { checkIfIdIsValid } = require('../Util/utils');
 
 module.exports.getCompany = async (req, res, next) => {
   try {
@@ -52,14 +53,14 @@ exports.updateCompany = (req, res, next) => {
   const updatedName = req.body.name;
   const updatedDisabled = req.body.disabled;
 
-  checkIfIdIsValid(companyId,res,next);
+  checkIfIdIsValid(companyId, res, next);
   Company.findById(companyId)
-    .then(company => {
-      if(company){
-      company.name = updatedName;
-      company.disabled = updatedDisabled;
+    .then((company) => {
+      if (company) {
+        company.name = updatedName;
+        company.disabled = updatedDisabled;
 
-      return company.save();
+        return company.save();
       }
       const error = new Error(
         `Project with id: ${companyId} has not been found!`
@@ -67,10 +68,10 @@ exports.updateCompany = (req, res, next) => {
       error.statusCode = 404;
       throw error;
     })
-    .then(result => {
+    .then((result) => {
       res.status(201).json({ message: 'Company updated!', company: result });
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -79,31 +80,33 @@ exports.updateCompany = (req, res, next) => {
 };
 
 exports.deleteCompany = (req, res, next) => {
-    const { companyId } = req.params;
+  const { companyId } = req.params;
 
-    checkIfIdIsValid(companyId, res, next);
-    Company.findByIdAndDelete(companyId)
-        .then(company => {
-            if (company) {
-                return company;
-            }
-            const error = new Error(
-                `Company with id: ${companyId} has not been found!`
-            );
-            error.statusCode = 404;
-            throw error;
-        }).then(company => {
-            return Project.deleteMany({ companyId: company._id });
-        }).then(() => {
-            res
-                .status(200)
-                .json({ message: `Company with id: ${companyId} has been deleted` });
-        })
-        .catch(err => {
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
-            return err;
-        });
+  checkIfIdIsValid(companyId, res, next);
+  Company.findByIdAndDelete(companyId)
+    .then((company) => {
+      if (company) {
+        return company;
+      }
+      const error = new Error(
+        `Company with id: ${companyId} has not been found!`
+      );
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((company) => {
+      return Project.deleteMany({ companyId: company._id });
+    })
+    .then(() => {
+      res
+        .status(200)
+        .json({ message: `Company with id: ${companyId} has been deleted` });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+      return err;
+    });
 };

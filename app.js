@@ -38,7 +38,7 @@ mongoose
     'mongodb+srv://node:XGeSsA5LgqKV8%23D@cluster0-zpnkm.mongodb.net/test?retryWrites=true&w=majority',
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
-  .then(result => {
+  .then(() => {
     app.listen(8080);
   })
-  .catch(err => console.error(err));
+  .catch((err) => console.error(err));

@@ -13,11 +13,8 @@ module.exports.fakeController = {
   },
 };
 
-
-module.exports.checkIfIdIsValid = function (id,res,next) {
-  if (mongoose.Types.ObjectId.isValid(id)) {
-    return;
-  }else {
+module.exports.checkIfIdIsValid = function (id, res, next) {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
     const error = new Error(`this id: ${id} is invalid!`);
     error.statusCode = 422;
     res.statusCode = 422; // just for testing

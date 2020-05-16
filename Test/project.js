@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const { expect } = require('chai');
 const sinon = require('sinon');
 const mongoose = require('mongoose');
@@ -13,8 +14,8 @@ const project = {
   companyId: '1',
 };
 
-describe('Project Controller - CRUD', function() {
-  it('project successfully created should return status 201 and the new Project !', function(done) {
+describe('Project Controller - CRUD', function () {
+  it('project successfully created should return status 201 and the new Project !', function (done) {
     sinon.stub(Project.prototype, 'save');
 
     Project.prototype.save.returns(project);
@@ -26,7 +27,7 @@ describe('Project Controller - CRUD', function() {
     expect(
       projectController
         .addProject(req, res, () => {})
-        .then(result => {
+        .then((result) => {
           expect(result).to.have.property('name');
           expect(result).to.have.property('scrumMaster');
           expect(result).to.have.property('disabled');
@@ -38,7 +39,7 @@ describe('Project Controller - CRUD', function() {
     );
   });
 
-  it('Project successfully fetched should return status of 200 and the project fetched !', function(done) {
+  it('Project successfully fetched should return status of 200 and the project fetched !', function (done) {
     sinon.stub(Project, 'findById');
 
     Project.findById.returns(project);
@@ -50,7 +51,7 @@ describe('Project Controller - CRUD', function() {
     expect(
       projectController
         .getProjectById(req, res, () => {})
-        .then(result => {
+        .then((result) => {
           expect(result).to.have.property('name');
           expect(result).to.have.property('scrumMaster');
           expect(result).to.have.property('disabled');
@@ -62,7 +63,7 @@ describe('Project Controller - CRUD', function() {
     );
   });
 
-  it('Project successfully updated should return the project updated and status of 200', function(done) {
+  it('Project successfully updated should return the project updated and status of 200', function (done) {
     sinon.stub(Project, 'findById');
     sinon.stub(Project.prototype, 'save');
 
@@ -94,7 +95,7 @@ describe('Project Controller - CRUD', function() {
     expect(
       projectController
         .getProjectById(req, res, () => {})
-        .then(result => {
+        .then(() => {
           expect(res.project.name).to.not.equal(project.name);
           expect(res.project.scrumMaster).to.not.equal(project.scrumMaster);
           expect(res.project.disabled).to.not.equal(project.disabled);
@@ -107,12 +108,10 @@ describe('Project Controller - CRUD', function() {
     );
   });
 
-  it('if the given project id does exist delete should return status of  200 !', function() {
+  it('if the given project id does exist delete should return status of  200 !', function () {
     sinon.stub(Project, 'findByIdAndDelete');
 
-    Project.findByIdAndDelete.returns(
-      new Promise((resolve, reject) => resolve(true))
-    );
+    Project.findByIdAndDelete.returns(new Promise((resolve) => resolve(true)));
 
     const req = {
       params: { projectId: '5ebc2625859bcf086cb4600d' },
@@ -128,8 +127,8 @@ describe('Project Controller - CRUD', function() {
   });
 });
 
-describe('Project Controller - ERROR HANDLER', function() {
-  it('An error on create a project should return status of 500', function(done) {
+describe('Project Controller - ERROR HANDLER', function () {
+  it('An error on create a project should return status of 500', function (done) {
     sinon.stub(Project.prototype, 'save');
 
     Project.prototype.save.throws();
@@ -141,7 +140,7 @@ describe('Project Controller - ERROR HANDLER', function() {
     expect(
       projectController
         .addProject(req, {}, () => {})
-        .then(result => {
+        .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
           Project.prototype.save.restore();
@@ -150,7 +149,7 @@ describe('Project Controller - ERROR HANDLER', function() {
     );
   });
 
-  it('If the id given to get the project does not exist should return an status of 500 and an error !', function(done) {
+  it('If the id given to get the project does not exist should return an status of 500 and an error !', function (done) {
     sinon.stub(Project, 'findById');
 
     Project.findById.throws();
@@ -162,7 +161,7 @@ describe('Project Controller - ERROR HANDLER', function() {
     expect(
       projectController
         .getProjectById(req, res, () => {})
-        .then(result => {
+        .then((result) => {
           expect(result).to.be.an('error');
           expect(result).to.have.property('statusCode', 500);
           Project.findById.restore();
@@ -171,7 +170,7 @@ describe('Project Controller - ERROR HANDLER', function() {
     );
   });
 
-  it('if the id given to update the project does no exists or is invalid should return an error and status of 4xx', function() {
+  it('if the id given to update the project does no exists or is invalid should return an error and status of 4xx', function () {
     sinon.stub(mongoose.Types.ObjectId, 'isValid');
     mongoose.Types.ObjectId.isValid.returns(false);
 
@@ -191,7 +190,7 @@ describe('Project Controller - ERROR HANDLER', function() {
     mongoose.Types.ObjectId.isValid.restore();
   });
 
-  it('if the id given to delete the project does no exists or is invalid should return an error and status of 4xx', function() {
+  it('if the id given to delete the project does no exists or is invalid should return an error and status of 4xx', function () {
     sinon.stub(mongoose.Types.ObjectId, 'isValid');
     mongoose.Types.ObjectId.isValid.returns(false);
 
