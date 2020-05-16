@@ -79,27 +79,31 @@ exports.updateCompany = (req, res, next) => {
 };
 
 exports.deleteCompany = (req, res, next) => {
-  const { companyId } = req.params;
+    const { companyId } = req.params;
 
-  checkIfIdIsValid(companyId,res,next);
-  Company.findByIdAndDelete(companyId)
-    .then(company => {
-      if(company){
-      res
-        .status(200)
-        .json({ message: `Company with id: ${companyId} has been deleted` });
-      }
-      const error = new Error(
-        `Project with id: ${companyId} has not been found!`
-      );
-      error.statusCode = 404;
-      throw error;
-    })
-    .catch(err => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-      return err;
-    });
+    checkIfIdIsValid(companyId, res, next);
+    Company.findByIdAndDelete(companyId)
+        .then(company => {
+            if (company) {
+                return company;
+            }
+            const error = new Error(
+                `Company with id: ${companyId} has not been found!`
+            );
+            error.statusCode = 404;
+            throw error;
+        }).then(company => {
+            return Project.deleteMany({ companyId: company._id });
+        }).then(() => {
+            res
+                .status(200)
+                .json({ message: `Company with id: ${companyId} has been deleted` });
+        })
+        .catch(err => {
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+            return err;
+        });
 };
