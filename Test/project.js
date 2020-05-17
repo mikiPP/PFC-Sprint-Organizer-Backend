@@ -125,6 +125,24 @@ describe('Project Controller - CRUD', function () {
 
     res.statusCode = 500;
   });
+  it('find by filter should return a list of projects filtereds', function () {
+    sinon.stub(Project, 'find');
+
+    Project.find.returns(
+      new Promise((resolve) => resolve({ projects: [project, project] }))
+    );
+
+    req = {
+      body: {
+        companyId: 1,
+      },
+    };
+
+    projectController.findByFilter(req, res, () => {});
+    expect(Project.find).not.to.throw();
+    expect(res.statusCode).to.equal(200);
+    Project.find.restore();
+  });
 });
 
 describe('Project Controller - ERROR HANDLER', function () {
@@ -202,5 +220,23 @@ describe('Project Controller - ERROR HANDLER', function () {
     expect(projectController.deleteProject).to.throw();
     expect(res.statusCode).to.not.equal(200);
     mongoose.Types.ObjectId.isValid.restore();
+  });
+  it('if get all by filter has an error should an error', function () {
+    sinon.stub(Project, 'find');
+
+    Project.find.returns(new Promise((reject) => reject()));
+
+    req = {
+      body: {
+        companyId: 1,
+      },
+    };
+
+    res.statusCode = 500;
+
+    projectController.findByFilter(req, res, () => {});
+    expect(projectController.findByFilter).to.throw();
+    expect(res.statusCode).to.equal(500);
+    Project.find.restore();
   });
 });

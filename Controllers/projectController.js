@@ -1,5 +1,5 @@
 const Project = require('../Models/project');
-const { checkIfIdIsValid } = require('../Util/utils');
+const utils = require('../Util/utils');
 
 exports.getProjectById = async (req, res, next) => {
   try {
@@ -60,7 +60,7 @@ exports.updateProject = (req, res, next) => {
   const { disabled } = req.body;
   const { companyId } = req.body;
 
-  checkIfIdIsValid(projectId, res, next);
+  utils.checkIfIdIsValid(projectId, res, next);
   Project.findById(projectId)
     .then((project) => {
       if (project) {
@@ -91,7 +91,7 @@ exports.updateProject = (req, res, next) => {
 exports.deleteProject = (req, res, next) => {
   const { projectId } = req.params;
 
-  checkIfIdIsValid(projectId, res, next);
+  utils.checkIfIdIsValid(projectId, res, next);
   Project.findByIdAndDelete(projectId)
     .then((result) => {
       if (result) {
@@ -111,5 +111,36 @@ exports.deleteProject = (req, res, next) => {
         err.statusCode = 500;
       }
       return next(err);
+    });
+};
+
+exports.findByFilter = (req, res, next) => {
+  const { name } = req.body;
+  const { scrumMaster } = req.body ? req.body : null;
+  const { disabled } = req.body;
+  const { companyId } = req.body;
+
+  const filter = { name, scrumMaster, disabled, companyId };
+  utils.cleanObject(filter);
+
+  Project.find(filter)
+    .then((projects) => {
+      if (projects !== undefined) {
+        res.status(200).json({
+          message: 'Projects has been fetched successfully.',
+          projects,
+        });
+        return;
+      }
+      const error = new Error('Something went wrong...');
+      error.statusCode = 404;
+      throw error;
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+        res.statusCode = 500;
+      }
+      next(err);
     });
 };

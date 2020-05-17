@@ -12,4 +12,6 @@ router.put('/:projectId', projectController.updateProject);
 
 router.delete('/:projectId', projectController.deleteProject);
 
+router.post('/filter', projectController.findByFilter);
+
 module.exports = router;
