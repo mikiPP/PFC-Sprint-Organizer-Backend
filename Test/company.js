@@ -1,19 +1,24 @@
+/* eslint-disable no-undef */
 const { expect } = require('chai');
 const sinon = require('sinon');
+const mongoose = require('mongoose');
 
 const Company = require('../Models/company');
+const Project = require('../Models/project');
 const companyController = require('../Controllers/companyController');
-const res = require('../Util/utils').fakeController.req;
+const { res } = require('../Util/utils').fakeController;
 
-describe('Company Controller - CRUD', function() {
-  it('company successfully saved should return status 201 and the new company !', function(done) {
+const company = {
+  name: 'test',
+  disabled: false,
+  _id: '1',
+};
+
+describe('Company Controller - CRUD', function () {
+  it('company successfully created should return status 201 and the new company !', function (done) {
     sinon.stub(Company.prototype, 'save');
 
-    Company.prototype.save.returns({
-      name: 'test',
-      disabled: false,
-      _id: '1',
-    });
+    Company.prototype.save.returns(new Promise((resolve) => resolve(company)));
 
     const req = {
       body: { name: 'Test' },
@@ -22,7 +27,7 @@ describe('Company Controller - CRUD', function() {
     expect(
       companyController
         .addCompany(req, res, () => {})
-        .then(result => {
+        .then((result) => {
           expect(result).to.have.property('name');
           expect(result).to.have.property('disabled');
           expect(res.statusCode).to.equal(201);
@@ -32,14 +37,10 @@ describe('Company Controller - CRUD', function() {
     );
   });
 
-  it('Company successefully fetched should return status 200 and the company fetched !', function(done) {
-    sinon.stub(Company, 'findOne');
+  it('Company successefully fetched should return status 200 and the company fetched !', function (done) {
+    sinon.stub(Company, 'findById');
 
-    Company.findOne.returns({
-      name: 'test',
-      disabled: false,
-      _id: '1',
-    });
+    Company.findById.returns(new Promise((resolve) => resolve(company)));
 
     const req = {
       params: { companyId: 1 },
@@ -48,24 +49,24 @@ describe('Company Controller - CRUD', function() {
     expect(
       companyController
         .getCompany(req, res, () => {})
-        .then(result => {
+        .then((result) => {
           expect(result).to.have.property('name');
           expect(result).to.have.property('disabled');
           expect(res.statusCode).to.equal(200);
-          Company.findOne.restore();
+          Company.findById.restore();
           done();
         })
     );
   });
 
-  it('delete a company successfully should return the status of 200 !', function(done) {
+  it('delete a company successfully should return the status of 200 !', function (done) {
     sinon.stub(Company, 'findByIdAndDelete');
 
-    Company.findByIdAndDelete.returns({
-      save() {
-        return { name: 'companyUpdated', disabled: true };
-      },
-    });
+    Company.findByIdAndDelete.returns(new Promise((resolve) => resolve(true)));
+
+    sinon.stub(Project, 'deleteMany');
+
+    Project.deleteMany.returns(new Promise((resolve) => resolve(true)));
 
     const req = {
       params: { companyId: 1 },
@@ -73,49 +74,63 @@ describe('Company Controller - CRUD', function() {
 
     expect(
       companyController
-        .getCompany(req, res, () => {})
-        .then(result => {
+        .deleteCompany(req, res, () => {})
+        .then(() => {
           expect(res.statusCode).to.equal(200);
           Company.findByIdAndDelete.restore();
+          Project.deleteMany.restore();
           done();
         })
     );
   });
 
-  it('company successfully updated should return the status of 200 !', function(done) {
-    sinon.stub(Company, 'findOne');
+  it('company successfully updated should return the status of 200 !', function (done) {
+    sinon.stub(Company, 'findById');
+    sinon.stub(Company.prototype, 'save');
 
-    Company.findOne.returns({
-      name: 'test',
-      disabled: false,
-      _id: '1',
-    });
+    Company.findById.returns(new Promise((resolve) => resolve(company)));
+
+    Company.prototype.save.returns(
+      new Promise((resolve) =>
+        resolve({
+          name: 'CompanyUpdated',
+          disabled: true,
+          _id: '2',
+        })
+      )
+    );
 
     res.company = { name: 'CompanyUpdated', disabled: true };
 
     const req = {
       params: { companyId: 1 },
+      body: {
+        name: 'CompanyUpdated',
+        disabled: true,
+        _id: '2',
+      },
     };
 
     expect(
       companyController
         .getCompany(req, res, () => {})
-        .then(result => {
+        .then(() => {
           expect(res.statusCode).to.equal(200);
-          expect(Company.findOne().name).to.not.equal(res.company.name);
-          expect(Company.findOne().disabled).to.not.equal(res.company.disabled);
-          Company.findOne.restore();
+          expect(res.company.name).to.not.equal(company.name);
+          expect(res.company.disabled).to.not.equal(company.disabled);
+          Company.findById.restore();
+          Company.prototype.save.restore();
           done();
         })
     );
   });
 });
 
-describe('Company Controller - ERROR HANDLER ', function() {
-  it('An error on create a company should return status 500', function(done) {
+describe('Company Controller - ERROR HANDLER ', function () {
+  it('An error on create a company should return status of 500', function (done) {
     sinon.stub(Company.prototype, 'save');
 
-    Company.prototype.save.throws();
+    Company.prototype.save.returns(new Promise((reject) => reject()));
 
     const req = {
       body: { name: 'Test' },
@@ -124,20 +139,19 @@ describe('Company Controller - ERROR HANDLER ', function() {
     expect(
       companyController
         .addCompany(req, {}, () => {})
-        .then(result => {
-          expect(result).to.be.an('error');
-          expect(result).to.have.property('statusCode', 500);
+        .then((result) => {
+          expect(result).to.not.equal(company);
+          expect(result).to.not.equal(200);
           Company.prototype.save.restore();
           done();
         })
-        .catch(err => console.log(err))
     );
   });
 
-  it('If the id given to get the company is not in the db should return an status of 500 and an error!', function(done) {
-    sinon.stub(Company, 'findOne');
+  it('If the id given to get the company is not in the db should return an status of 500 and an error!', function (done) {
+    sinon.stub(Company, 'findById');
 
-    Company.findOne.throws();
+    Company.findById.returns(new Promise((reject) => reject()));
 
     const req = {
       params: { companyId: 1 },
@@ -146,59 +160,44 @@ describe('Company Controller - ERROR HANDLER ', function() {
     expect(
       companyController
         .getCompany(req, res, () => {})
-        .then(result => {
-          expect(result).to.be.an('error');
-          expect(result).to.have.property('statusCode', 500);
-          Company.findOne.restore();
+        .then((result) => {
+          expect(result).to.not.equal(company);
+          expect(result).to.not.equal(200);
+          Company.findById.restore();
           done();
         })
     );
   });
 
-  it('if the given company does not exist delete should return an error and status 500 !', function(done) {
-    sinon.stub(Company, 'findByIdAndDelete');
-
-    Company.findByIdAndDelete.throws();
+  it('if the given company does not exist delete should return an error and status 4xx !', function () {
+    sinon.stub(mongoose.Types.ObjectId, 'isValid');
+    mongoose.Types.ObjectId.isValid.returns(false);
 
     const req = {
       params: { companyId: 1 },
     };
 
-    res.statusCode = 200;
-
-    expect(
-      companyController
-        .getCompany(req, {}, () => {})
-        .then(result => {
-          expect(result).to.have.property('statusCode', 500);
-          Company.findByIdAndDelete.restore();
-          done();
-        })
-    );
-
-    res.statusCode = 500;
+    companyController.deleteCompany(req, res, () => {});
+    expect(companyController.deleteCompany).to.throw();
+    expect(res.status).to.not.equal(200);
+    mongoose.Types.ObjectId.isValid.restore();
   });
 
-  it('if the id given to update the company does not exists should return an error and status of 500 !', function(done) {
-    sinon.stub(Company, 'findOne');
-
-    Company.findOne.throws();
-
-    res.company = { name: 'CompanyUpdated', disabled: true };
+  it('if the id given to update the company does not exists should return an error and status of 500 !', function () {
+    sinon.stub(mongoose.Types.ObjectId, 'isValid');
+    mongoose.Types.ObjectId.isValid.returns(false);
 
     const req = {
       params: { companyId: 1 },
+      body: {
+        name: 'testUpdated',
+        disabled: true,
+      },
     };
 
-    expect(
-      companyController
-        .getCompany(req, {}, () => {})
-        .then(result => {
-          expect(result).to.be.an('error');
-          expect(result).to.have.property('statusCode', 500);
-          Company.findOne.restore();
-          done();
-        })
-    );
+    companyController.updateCompany(req, res, () => {});
+    expect(companyController.updateCompany).to.throw();
+    expect(res.status).to.not.equal(200);
+    mongoose.Types.ObjectId.isValid.restore();
   });
 });
