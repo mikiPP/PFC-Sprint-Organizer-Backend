@@ -7,7 +7,9 @@
     "test": "mocha Test --timeout 5000",
     "start": "nodemon app.js",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -26,7 +28,8 @@
     "mocha": "^7.1.2",
     "mongodb": "^3.5.7",
     "mongoose": "^5.9.13",
-    "sinon": "^9.0.2"
+    "sinon": "^9.0.2",
+    "snyk": "^1.321.0"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -41,5 +44,6 @@
     "eslint-plugin-react-hooks": "^2.5.0",
     "nodemon": "^2.0.3",
     "prettier": "^2.0.5"
-  }
+  },
+  "snyk": true
 }
