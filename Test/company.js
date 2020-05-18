@@ -4,6 +4,7 @@ const sinon = require('sinon');
 const mongoose = require('mongoose');
 
 const Company = require('../Models/company');
+const Project = require('../Models/project');
 const companyController = require('../Controllers/companyController');
 const { res } = require('../Util/utils').fakeController;
 
@@ -17,7 +18,7 @@ describe('Company Controller - CRUD', function () {
   it('company successfully created should return status 201 and the new company !', function (done) {
     sinon.stub(Company.prototype, 'save');
 
-    Company.prototype.save.returns(company);
+    Company.prototype.save.returns(new Promise((resolve) => resolve(company)));
 
     const req = {
       body: { name: 'Test' },
@@ -39,7 +40,7 @@ describe('Company Controller - CRUD', function () {
   it('Company successefully fetched should return status 200 and the company fetched !', function (done) {
     sinon.stub(Company, 'findById');
 
-    Company.findById.returns(company);
+    Company.findById.returns(new Promise((resolve) => resolve(company)));
 
     const req = {
       params: { companyId: 1 },
@@ -61,11 +62,11 @@ describe('Company Controller - CRUD', function () {
   it('delete a company successfully should return the status of 200 !', function (done) {
     sinon.stub(Company, 'findByIdAndDelete');
 
-    Company.findByIdAndDelete.returns({
-      save() {
-        return { name: 'companyUpdated', disabled: true };
-      },
-    });
+    Company.findByIdAndDelete.returns(new Promise((resolve) => resolve(true)));
+
+    sinon.stub(Project, 'deleteMany');
+
+    Project.deleteMany.returns(new Promise((resolve) => resolve(true)));
 
     const req = {
       params: { companyId: 1 },
@@ -73,10 +74,11 @@ describe('Company Controller - CRUD', function () {
 
     expect(
       companyController
-        .getCompany(req, res, () => {})
-        .then((result) => {
+        .deleteCompany(req, res, () => {})
+        .then(() => {
           expect(res.statusCode).to.equal(200);
           Company.findByIdAndDelete.restore();
+          Project.deleteMany.restore();
           done();
         })
     );
@@ -86,17 +88,17 @@ describe('Company Controller - CRUD', function () {
     sinon.stub(Company, 'findById');
     sinon.stub(Company.prototype, 'save');
 
-    Company.findById.returns({
-      name: 'test',
-      disabled: false,
-      _id: '1',
-    });
+    Company.findById.returns(new Promise((resolve) => resolve(company)));
 
-    Company.prototype.save.returns({
-      name: 'CompanyUpdated',
-      disabled: true,
-      _id: '2',
-    });
+    Company.prototype.save.returns(
+      new Promise((resolve) =>
+        resolve({
+          name: 'CompanyUpdated',
+          disabled: true,
+          _id: '2',
+        })
+      )
+    );
 
     res.company = { name: 'CompanyUpdated', disabled: true };
 
@@ -112,7 +114,7 @@ describe('Company Controller - CRUD', function () {
     expect(
       companyController
         .getCompany(req, res, () => {})
-        .then((result) => {
+        .then(() => {
           expect(res.statusCode).to.equal(200);
           expect(res.company.name).to.not.equal(company.name);
           expect(res.company.disabled).to.not.equal(company.disabled);
@@ -128,7 +130,7 @@ describe('Company Controller - ERROR HANDLER ', function () {
   it('An error on create a company should return status of 500', function (done) {
     sinon.stub(Company.prototype, 'save');
 
-    Company.prototype.save.throws();
+    Company.prototype.save.returns(new Promise((reject) => reject()));
 
     const req = {
       body: { name: 'Test' },
@@ -138,8 +140,8 @@ describe('Company Controller - ERROR HANDLER ', function () {
       companyController
         .addCompany(req, {}, () => {})
         .then((result) => {
-          expect(result).to.be.an('error');
-          expect(result).to.have.property('statusCode', 500);
+          expect(result).to.not.equal(company);
+          expect(result).to.not.equal(200);
           Company.prototype.save.restore();
           done();
         })
@@ -149,7 +151,7 @@ describe('Company Controller - ERROR HANDLER ', function () {
   it('If the id given to get the company is not in the db should return an status of 500 and an error!', function (done) {
     sinon.stub(Company, 'findById');
 
-    Company.findById.throws();
+    Company.findById.returns(new Promise((reject) => reject()));
 
     const req = {
       params: { companyId: 1 },
@@ -159,8 +161,8 @@ describe('Company Controller - ERROR HANDLER ', function () {
       companyController
         .getCompany(req, res, () => {})
         .then((result) => {
-          expect(result).to.be.an('error');
-          expect(result).to.have.property('statusCode', 500);
+          expect(result).to.not.equal(company);
+          expect(result).to.not.equal(200);
           Company.findById.restore();
           done();
         })

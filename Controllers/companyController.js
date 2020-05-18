@@ -1,51 +1,50 @@
 const Company = require('../Models/company');
 const Project = require('../Models/project');
-const { checkIfIdIsValid } = require('../Util/utils');
+const utils = require('../Util/utils');
 
-module.exports.getCompany = async (req, res, next) => {
-  try {
-    const { companyId } = req.params;
+module.exports.getCompany = (req, res, next) => {
+  const { companyId } = req.params;
 
-    const company = await Company.findById(companyId);
+  return Company.findById(companyId)
+    .then((company) => {
+      if (!company) {
+        const error = new Error(
+          `Coudnt not find Company by the id: ${companyId}`
+        );
+        error.statusCode = 404;
+        throw error;
+      }
 
-    if (!company) {
-      const error = new Error(
-        `Coudnt not find Company by the id: ${companyId}`
-      );
-      error.statusCode = 404;
-      throw error;
-    }
-
-    res.status(200).json({ message: 'Company have been fetched', company });
-    return company;
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-    return err;
-  }
+      res.status(200).json({ message: 'Company have been fetched', company });
+      return company;
+    })
+    .catch((err) => {
+      return utils.errorHandler(err, res, next);
+    });
 };
 
-exports.addCompany = async (req, res, next) => {
-  try {
-    const company = new Company({ name: req.body.name });
-    const result = await company.save();
-    if (!result) {
-      const error = new Error('The company has not been created');
-      error.statusCode = 500;
-      throw error;
-    }
+exports.addCompany = (req, res, next) => {
+  const { name } = req.body;
 
-    res.status(201).json({ message: 'Company created!', company: result });
-    return result;
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-    return err;
-  }
+  const company = new Company({ name });
+
+  return company
+    .save()
+    .then((companySaved) => {
+      if (!companySaved) {
+        const error = new Error('The company has not been created');
+        error.statusCode = 500;
+        throw error;
+      }
+
+      res
+        .status(201)
+        .json({ message: 'Company created!', company: companySaved });
+      return companySaved;
+    })
+    .catch((err) => {
+      return utils.errorHandler(err, res, next);
+    });
 };
 
 exports.updateCompany = (req, res, next) => {
@@ -53,8 +52,8 @@ exports.updateCompany = (req, res, next) => {
   const updatedName = req.body.name;
   const updatedDisabled = req.body.disabled;
 
-  checkIfIdIsValid(companyId, res, next);
-  Company.findById(companyId)
+  utils.checkIfIdIsValid(companyId, res, next);
+  return Company.findById(companyId)
     .then((company) => {
       if (company) {
         company.name = updatedName;
@@ -70,20 +69,18 @@ exports.updateCompany = (req, res, next) => {
     })
     .then((result) => {
       res.status(201).json({ message: 'Company updated!', company: result });
+      return result;
     })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
+      return utils.errorHandler(err, res, next);
     });
 };
 
 exports.deleteCompany = (req, res, next) => {
   const { companyId } = req.params;
 
-  checkIfIdIsValid(companyId, res, next);
-  Company.findByIdAndDelete(companyId)
+  utils.checkIfIdIsValid(companyId, res, next);
+  return Company.findByIdAndDelete(companyId)
     .then((company) => {
       if (company) {
         return company;
@@ -95,18 +92,18 @@ exports.deleteCompany = (req, res, next) => {
       throw error;
     })
     .then((company) => {
-      return Project.deleteMany({ companyId: company._id });
+      return Project.deleteMany({ companyId: company._id }).then(() => {
+        return company;
+      });
     })
-    .then(() => {
+    .then((company) => {
+      console.log('something');
       res
         .status(200)
         .json({ message: `Company with id: ${companyId} has been deleted` });
+      return company;
     })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-      return err;
+      return utils.errorHandler(err, res, next);
     });
 };

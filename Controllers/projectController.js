@@ -1,31 +1,27 @@
 const Project = require('../Models/project');
 const utils = require('../Util/utils');
 
-exports.getProjectById = async (req, res, next) => {
-  try {
-    const { projectId } = req.params;
+exports.getProjectById = (req, res, next) => {
+  const { projectId } = req.params;
 
-    const project = await Project.findById(projectId);
-
-    if (!project) {
-      const error = new Error(
-        `Coudn't not find project by the id: ${projectId}`
-      );
-      error.statusCode = 404;
-      throw error;
-    }
-    res.status(200).json({ message: 'Project have been fetched', project });
-    return project;
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-    return err;
-  }
+  return Project.findById(projectId)
+    .then((project) => {
+      if (!project) {
+        const error = new Error(
+          `Coudn't not find project by the id: ${projectId}`
+        );
+        error.statusCode = 404;
+        throw error;
+      }
+      res.status(200).json({ message: 'Project have been fetched', project });
+      return project;
+    })
+    .catch((err) => {
+      return utils.errorHandler(err, res, next);
+    });
 };
 
-exports.addProject = async (req, res, next) => {
+exports.addProject = (req, res, next) => {
   const { name } = req.body;
   const { scrumMaster } = req.body;
   const { disabled } = req.body;
@@ -33,23 +29,22 @@ exports.addProject = async (req, res, next) => {
 
   const project = new Project({ name, scrumMaster, disabled, companyId });
 
-  try {
-    const result = await project.save();
-    if (!result) {
-      const error = new Error('The project has not been created');
-      error.statusCode = 500;
-      throw error;
-    }
-
-    res.status(201).json({ message: 'project created!', Project: result });
-    return result;
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-    return err;
-  }
+  return project
+    .save()
+    .then((projectSaved) => {
+      if (!projectSaved) {
+        const error = new Error('The project has not been created');
+        error.statusCode = 500;
+        throw error;
+      }
+      res
+        .status(201)
+        .json({ message: 'project created!', Project: projectSaved });
+      return projectSaved;
+    })
+    .catch((err) => {
+      return utils.errorHandler(err, res, next);
+    });
 };
 
 exports.updateProject = (req, res, next) => {
@@ -58,16 +53,15 @@ exports.updateProject = (req, res, next) => {
   const { name } = req.body;
   const { scrumMaster } = req.body;
   const { disabled } = req.body;
-  const { companyId } = req.body;
 
   utils.checkIfIdIsValid(projectId, res, next);
-  Project.findById(projectId)
+  return Project.findById(projectId)
     .then((project) => {
       if (project) {
         project.name = name;
         project.scrumMaster = scrumMaster;
         project.disabled = disabled;
-        project.companyId = companyId;
+        utils.cleanObject(project);
 
         return project.save();
       }
@@ -77,14 +71,12 @@ exports.updateProject = (req, res, next) => {
       error.statusCode = 404;
       throw error;
     })
-    .then((result) => {
-      res.status(201).json({ message: 'Project updated!', project: result });
+    .then((project) => {
+      res.status(200).json({ message: 'Project updated!', project });
+      return project;
     })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      return next(err);
+      utils.errorHandler(err, res, next);
     });
 };
 
@@ -92,9 +84,9 @@ exports.deleteProject = (req, res, next) => {
   const { projectId } = req.params;
 
   utils.checkIfIdIsValid(projectId, res, next);
-  Project.findByIdAndDelete(projectId)
-    .then((result) => {
-      if (result) {
+  return Project.findByIdAndDelete(projectId)
+    .then((project) => {
+      if (project) {
         res.status(200).json({
           message: `project with id: ${projectId} has been deleted`,
         });
@@ -107,10 +99,7 @@ exports.deleteProject = (req, res, next) => {
       throw error;
     })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      return next(err);
+      return utils.errorHandler(err, res, next);
     });
 };
 
@@ -123,24 +112,20 @@ exports.findByFilter = (req, res, next) => {
   const filter = { name, scrumMaster, disabled, companyId };
   utils.cleanObject(filter);
 
-  Project.find(filter)
+  return Project.find(filter)
     .then((projects) => {
       if (projects !== undefined) {
         res.status(200).json({
           message: 'Projects has been fetched successfully.',
           projects,
         });
-        return;
+        return projects;
       }
       const error = new Error('Something went wrong...');
       error.statusCode = 404;
       throw error;
     })
     .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-        res.statusCode = 500;
-      }
-      next(err);
+      return utils.errorHandler(err, res, next);
     });
 };

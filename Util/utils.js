@@ -26,10 +26,10 @@ module.exports.cleanObject = function (obj) {
   Object.keys(obj).forEach((key) => obj[key] == null && delete obj[key]);
 };
 
-module.exports.treatErrors = function (error, res, next) {
+module.exports.errorHandler = function (error, res, next) {
   if (!error.statusCode) {
     error.statusCode = 500;
     res.statusCode = 500;
   }
-  next(error);
+  return next(error);
 };
