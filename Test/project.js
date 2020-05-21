@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const Project = require('../Models/project');
 const projectController = require('../Controllers/projectController');
-const { res } = require('../Util/utils').fakeController;
+const res = require('../Util/utils').fakeRes;
 
 const project = {
   name: 'test',
@@ -126,8 +126,6 @@ describe('Project Controller - CRUD', function () {
     expect(res.statusCode).to.equal(200);
 
     Project.findByIdAndDelete.restore();
-
-    res.statusCode = 500;
   });
   it('find by filter should return a list of projects filtereds', function () {
     sinon.stub(Project, 'find');
@@ -159,11 +157,13 @@ describe('Project Controller - ERROR HANDLER', function () {
       body: project,
     };
 
+    res.statusCode = undefined;
+
     projectController
       .addProject(req, res, () => {})
       .then((result) => {
         expect(result).to.not.equal(project);
-        expect(res.status).to.not.equal(200);
+        expect(res.statusCode).to.not.equal(200);
         Project.prototype.save.restore();
         done();
       });
@@ -178,11 +178,13 @@ describe('Project Controller - ERROR HANDLER', function () {
       params: { projectId: 2 },
     };
 
+    res.statusCode = undefined;
+
     projectController
       .getProjectById(req, res, () => {})
       .then(() => {
         expect(projectController.getProjectById).to.throw();
-        expect(res.status).to.not.equal(200);
+        expect(res.statusCode).to.not.equal(200);
         Project.findById.restore();
         done();
       });
@@ -204,7 +206,7 @@ describe('Project Controller - ERROR HANDLER', function () {
 
     projectController.updateProject(req, res, () => {});
     expect(projectController.updateProject).to.throw();
-    expect(res.status).to.not.equal(200);
+    expect(res.statusCode).to.not.equal(200);
     mongoose.Types.ObjectId.isValid.restore();
   });
 
