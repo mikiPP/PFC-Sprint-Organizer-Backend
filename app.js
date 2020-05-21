@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const companyRoutes = require('./Routes/companyRoutes');
 const projectRoutes = require('./Routes/projectRoutes');
+const taskRoutes = require('./Routes/taskRoutes');
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(bodyParser.json());
 
 app.use('/company', companyRoutes, bodyParser);
 app.use('/project', projectRoutes, bodyParser);
+app.use('/task', taskRoutes, bodyParser);
 
 app.use((req, res, next) => {
   res.setHeader('Acess-Controll-Allow-Origin', '*');
