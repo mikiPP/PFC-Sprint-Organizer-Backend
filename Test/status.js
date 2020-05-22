@@ -106,6 +106,29 @@ describe('Status controller - CRUD', function () {
       .then(() => {
         expect(Status.findByIdAndDelete).not.to.throw();
         expect(res.statusCode).to.equal(200);
+        Status.findByIdAndDelete.restore();
+        done();
+      });
+  });
+  it('find by filter should return a list of statuses filtereds', function (done) {
+    sinon.stub(Status, 'find');
+
+    Status.find.returns(new Promise((resolve) => resolve([status, status])));
+
+    req = {
+      body: {
+        name: 'test',
+      },
+    };
+
+    res.statusCode = 100;
+
+    statusController
+      .findByFilter(req, res, () => {})
+      .then(() => {
+        expect(Status.find).to.not.throw();
+        expect(res.statusCode).to.equal(200);
+        Status.find.restore();
         done();
       });
   });
@@ -173,5 +196,52 @@ describe('Status controller - ERROR HANDLER', function () {
     expect(res.statusCode).to.not.equal(200);
 
     mongoose.Types.ObjectId.isValid.restore();
+  });
+
+  it('error when status is beeing deleted should return an error and status of 500', function (done) {
+    sinon.stub(Status, 'findByIdAndDelete');
+    Status.findByIdAndDelete.returns(
+      new Promise((reject) => {
+        reject(false);
+      })
+    );
+
+    const req = {
+      params: { statusId: '5ec57bd6a31f661b2411e7fc' },
+    };
+
+    res.statusCode = undefined;
+
+    statusController
+      .deleteStatus(req, res, () => {})
+      .then(() => {
+        expect(statusController.deleteStatus).to.throw();
+        expect(res.statusCode).not.to.equal(200);
+        Status.findByIdAndDelete.restore();
+        done();
+      });
+  });
+
+  it('find by filter has an error should return this error', function (done) {
+    sinon.stub(Status, 'find');
+
+    Status.find.returns(new Promise((resolve) => resolve(false)));
+
+    const req = {
+      body: {
+        name: 'test',
+      },
+    };
+
+    res.statusCode = undefined;
+
+    statusController
+      .findByFilter(req, res, () => {})
+      .then(() => {
+        expect(statusController.findByFilter).to.throw();
+        expect(res.statusCode).not.to.equal(200);
+        Status.find.restore();
+        done();
+      });
   });
 });

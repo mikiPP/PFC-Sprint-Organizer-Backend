@@ -67,7 +67,6 @@ exports.updateStatus = (req, res, next) => {
 exports.deleteStatus = (req, res, next) => {
   const { statusId } = req.params;
   utils.checkIfIdIsValid(statusId, res, next);
-
   return Status.findByIdAndDelete(statusId)
     .then((status) => {
       utils.checkNotFound(status, statusId, 'status');
@@ -75,6 +74,34 @@ exports.deleteStatus = (req, res, next) => {
       res
         .status(200)
         .json({ message: `Status whith id: ${statusId} has been removed` });
+    })
+    .catch((err) => utils.errorHandler(err, res, next));
+};
+
+exports.findByFilter = (req, res, next) => {
+  const { name } = req.body;
+  const { description } = req.body;
+
+  const filter = {
+    name,
+    description,
+  };
+
+  utils.cleanObject(filter);
+
+  return Status.find(filter)
+    .then((statuses) => {
+      if (statuses) {
+        res.status(200).json({
+          message: ' Statuses has been fetched successfully',
+          statuses,
+        });
+        return statuses;
+      }
+
+      const error = new Error('Something went wrong...');
+      error.statusCode = 404;
+      throw error;
     })
     .catch((err) => utils.errorHandler(err, res, next));
 };
