@@ -8,4 +8,6 @@ router.get('/:statusId', statusController.getStatusById);
 
 router.post('/', statusController.addStatus);
 
+router.post('/:statusId', statusController.updateStatus);
+
 module.exports = router;

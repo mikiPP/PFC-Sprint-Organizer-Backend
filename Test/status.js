@@ -55,6 +55,41 @@ describe('Status controller - CRUD', function () {
         done();
       });
   });
+
+  it('Status successfully updated should return the status updated and status of 200', function (done) {
+    sinon.stub(Status, 'findById');
+    sinon.stub(Status.prototype, 'save');
+
+    Status.findById.returns(new Promise((resolve) => resolve(status)));
+    Status.prototype.save.returns(
+      new Promise((resolve) =>
+        resolve({
+          name: 'status updated',
+          description: 'description updated',
+        })
+      )
+    );
+
+    const req = {
+      params: { statusId: '5ec57bd6a31f661b2411e7fc' },
+      body: {
+        name: 'status updated',
+        description: 'description updated',
+      },
+    };
+
+    expect(
+      statusController
+        .updateStatus(req, res, () => {})
+        .then((result) => {
+          expect(result.name).to.equal(status.name);
+          expect(result.description).to.equal(status.description);
+          Status.findById.restore();
+          Status.prototype.save.restore();
+          done();
+        })
+    );
+  });
 });
 
 describe('Status controller - ERROR HANDLER', function () {
@@ -99,5 +134,25 @@ describe('Status controller - ERROR HANDLER', function () {
         Status.findById.restore();
         done();
       });
+  });
+  it('error when status is beeing update should return an error and status of 500', function () {
+    sinon.stub(mongoose.Types.ObjectId, 'isValid');
+    mongoose.Types.ObjectId.isValid.returns(false);
+
+    const req = {
+      params: { statusId: 1 },
+      body: {
+        name: 'updated',
+        description: 'description updated',
+      },
+    };
+
+    res.statusCode = undefined;
+
+    statusController.updateStatus(req, res, () => {});
+    expect(statusController.updateStatus).to.throw();
+    expect(res.statusCode).to.not.equal(200);
+
+    mongoose.Types.ObjectId.isValid.restore();
   });
 });

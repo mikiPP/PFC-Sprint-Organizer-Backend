@@ -39,3 +39,27 @@ exports.addStatus = (req, res, next) => {
     })
     .catch((err) => utils.errorHandler(err, res, next));
 };
+
+exports.updateStatus = (req, res, next) => {
+  const { statusId } = req.params;
+
+  const { name } = req.body;
+  const { description } = req.body;
+
+  utils.checkIfIdIsValid(statusId, res, next);
+
+  return Status.findById(statusId)
+    .then((status) => {
+      utils.checkNotFound(status, statusId, 'Status');
+
+      status.name = name || status.name;
+      status.description = description || status.description;
+
+      return status.save();
+    })
+    .then((status) => {
+      res.status(200).json({ message: 'Status has been updated !', status });
+      return status;
+    })
+    .catch((err) => utils.errorHandler(err, res, next));
+};
