@@ -35,10 +35,10 @@ describe('Status controller - CRUD', function () {
     );
   });
 
-  it('If id given to get the status does not exist should return an status of 500 and an error !', function (done) {
+  it('If id given to get the status does  exist should return an status of 200 and the status Object !', function (done) {
     sinon.stub(Status, 'findById');
 
-    Status.findById.returns(new Promise((reject) => reject()));
+    Status.findById.returns(new Promise((resolve) => resolve(status)));
 
     const req = {
       params: { statusId: 2 },
@@ -49,8 +49,8 @@ describe('Status controller - CRUD', function () {
     statusController
       .getStatusById(req, res, () => {})
       .then(() => {
-        expect(statusController.getStatusById).to.throw();
-        expect(res.statusCode).not.to.equal(200);
+        expect(Status.findById).not.to.throw();
+        expect(res.statusCode).to.equal(200);
         Status.findById.restore();
         done();
       });
@@ -78,17 +78,16 @@ describe('Status controller - CRUD', function () {
       },
     };
 
-    expect(
-      statusController
-        .updateStatus(req, res, () => {})
-        .then((result) => {
-          expect(result.name).to.equal(status.name);
-          expect(result.description).to.equal(status.description);
-          Status.findById.restore();
-          Status.prototype.save.restore();
-          done();
-        })
-    );
+    statusController
+      .updateStatus(req, res, () => {})
+      .then((result) => {
+        expect(result.name).to.equal(status.name);
+        expect(result.description).to.equal(status.description);
+        expect(res.statusCode).to.equal(200);
+        Status.findById.restore();
+        Status.prototype.save.restore();
+        done();
+      });
   });
 
   it('if the given status id does exist delete should delete it and return status of 200', function (done) {
@@ -138,7 +137,7 @@ describe('Status controller - ERROR HANDLER', function () {
   it('An error on create should return status of 500', function (done) {
     sinon.stub(Status.prototype, 'save');
 
-    Status.prototype.save.returns(new Promise((resolve) => resolve(status)));
+    Status.prototype.save.returns(new Promise((reject) => reject()));
 
     const req = {
       body: status,
@@ -146,16 +145,14 @@ describe('Status controller - ERROR HANDLER', function () {
 
     res.statusCode = undefined;
 
-    expect(
-      statusController
-        .addStatus(req, res, () => {})
-        .then((result) => {
-          expect(result).to.equal(status);
-          expect(res.statusCode).to.equal(201);
-          Status.prototype.save.restore();
-          done();
-        })
-    );
+    statusController
+      .addStatus(req, res, () => {})
+      .then((result) => {
+        expect(result).to.not.equal(status);
+        expect(res.statusCode).to.not.equal(200);
+        Status.prototype.save.restore();
+        done();
+      });
   });
   it('If id given to get the status does not exist should return an status of 500 and an error !', function (done) {
     sinon.stub(Status, 'findById');
@@ -177,7 +174,7 @@ describe('Status controller - ERROR HANDLER', function () {
         done();
       });
   });
-  it('error when status is beeing update should return an error and status of 500', function (done) {
+  it('error when status is beeing updated should return an error and status of 500', function (done) {
     sinon.stub(mongoose.Types.ObjectId, 'isValid');
     mongoose.Types.ObjectId.isValid.returns(false);
 
@@ -193,6 +190,7 @@ describe('Status controller - ERROR HANDLER', function () {
 
     statusController
       .updateStatus(req, res, () => {})
+
       .then(() => {
         expect(statusController.updateStatus).to.throw();
         expect(res.statusCode).to.not.equal(200);
@@ -225,7 +223,7 @@ describe('Status controller - ERROR HANDLER', function () {
       });
   });
 
-  it('find by filter has an error should return this error', function (done) {
+  it('if find by filter has an error should return this error', function (done) {
     sinon.stub(Status, 'find');
 
     Status.find.returns(new Promise((resolve) => resolve(false)));
