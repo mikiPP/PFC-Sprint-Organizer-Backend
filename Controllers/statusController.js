@@ -63,3 +63,18 @@ exports.updateStatus = (req, res, next) => {
     })
     .catch((err) => utils.errorHandler(err, res, next));
 };
+
+exports.deleteStatus = (req, res, next) => {
+  const { statusId } = req.params;
+  utils.checkIfIdIsValid(statusId, res, next);
+
+  return Status.findByIdAndDelete(statusId)
+    .then((status) => {
+      utils.checkNotFound(status, statusId, 'status');
+
+      res
+        .status(200)
+        .json({ message: `Status whith id: ${statusId} has been removed` });
+    })
+    .catch((err) => utils.errorHandler(err, res, next));
+};

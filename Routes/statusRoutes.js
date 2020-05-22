@@ -10,4 +10,6 @@ router.post('/', statusController.addStatus);
 
 router.post('/:statusId', statusController.updateStatus);
 
+router.delete('/:statusId', statusController.deleteStatus);
+
 module.exports = router;

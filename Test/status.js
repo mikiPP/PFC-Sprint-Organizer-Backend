@@ -90,6 +90,25 @@ describe('Status controller - CRUD', function () {
         })
     );
   });
+
+  it('if the given status id does exist delete should delete it and return status of 200', function (done) {
+    sinon.stub(Status, 'findByIdAndDelete');
+
+    Status.findByIdAndDelete.returns(new Promise((resolve) => resolve(true)));
+
+    const req = {
+      params: { statusId: '5ec7acfdfdd6323a3c441409' },
+    };
+
+    res.statusCode = 100;
+    statusController
+      .deleteStatus(req, res, () => {})
+      .then(() => {
+        expect(Status.findByIdAndDelete).not.to.throw();
+        expect(res.statusCode).to.equal(200);
+        done();
+      });
+  });
 });
 
 describe('Status controller - ERROR HANDLER', function () {
