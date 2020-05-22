@@ -177,7 +177,7 @@ describe('Status controller - ERROR HANDLER', function () {
         done();
       });
   });
-  it('error when status is beeing update should return an error and status of 500', function () {
+  it('error when status is beeing update should return an error and status of 500', function (done) {
     sinon.stub(mongoose.Types.ObjectId, 'isValid');
     mongoose.Types.ObjectId.isValid.returns(false);
 
@@ -191,11 +191,14 @@ describe('Status controller - ERROR HANDLER', function () {
 
     res.statusCode = undefined;
 
-    statusController.updateStatus(req, res, () => {});
-    expect(statusController.updateStatus).to.throw();
-    expect(res.statusCode).to.not.equal(200);
-
-    mongoose.Types.ObjectId.isValid.restore();
+    statusController
+      .updateStatus(req, res, () => {})
+      .then(() => {
+        expect(statusController.updateStatus).to.throw();
+        expect(res.statusCode).to.not.equal(200);
+        mongoose.Types.ObjectId.isValid.restore();
+        done();
+      });
   });
 
   it('error when status is beeing deleted should return an error and status of 500', function (done) {

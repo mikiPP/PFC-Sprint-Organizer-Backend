@@ -86,7 +86,7 @@ exports.deleteTask = (req, res, next) => {
     .then((task) => {
       utils.checkNotFound(task, taskId, 'Task');
       res.status(200).json({
-        message: `project with id: ${taskId} has been deleted`,
+        message: `task with id: ${taskId} has been deleted`,
       });
     })
     .catch((err) => utils.errorHandler(err, res, next));
