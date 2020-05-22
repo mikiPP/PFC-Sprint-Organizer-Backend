@@ -110,7 +110,7 @@ describe('Task controller - CRUD', function () {
     );
   });
 
-  it('If the given task id does exist delete should return status of 200', function () {
+  it('If the given task id does exist delete should delete it return status of 200', function () {
     sinon.stub(Task, 'findByIdAndDelete');
 
     Task.findByIdAndDelete.returns(new Promise((resolve) => resolve(true)));
@@ -160,7 +160,7 @@ describe('Task controller - ERROR HANDLER', function () {
       .addTask(req, res, () => {})
       .then((result) => {
         expect(result).to.not.equal(task);
-        expect(res.statusCode).to.not.equal(200);
+        expect(res.statusCode).to.not.equal(201);
         Task.prototype.save.restore();
         done();
       });
@@ -226,7 +226,7 @@ describe('Task controller - ERROR HANDLER', function () {
     mongoose.Types.ObjectId.isValid.restore();
   });
 
-  it('find by filter should return a list of tasks filtereds', function () {
+  it('if find by filter has an error should return an error', function () {
     sinon.stub(Task, 'find');
     Task.find.returns(new Promise((reject) => reject()));
 
@@ -239,7 +239,7 @@ describe('Task controller - ERROR HANDLER', function () {
     res.statusCode = 500;
 
     taskController.findByFilter(req, res, () => {});
-    expect(Task.find).to.not.throw();
+    expect(taskController.findByFilter).to.throw();
     expect(res.statusCode).not.to.equal(200);
     Task.find.restore();
   });
