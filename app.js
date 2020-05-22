@@ -6,6 +6,7 @@ const companyRoutes = require('./Routes/companyRoutes');
 const projectRoutes = require('./Routes/projectRoutes');
 const taskRoutes = require('./Routes/taskRoutes');
 const statusRoutes = require('./Routes/statusRoutes');
+const employeeRoutes = require('./Routes/employeeRoutes');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use('/company', companyRoutes, bodyParser);
 app.use('/project', projectRoutes, bodyParser);
 app.use('/task', taskRoutes, bodyParser);
 app.use('/status', statusRoutes, bodyParser);
+app.use('/employee', employeeRoutes, bodyParser);
 
 app.use((req, res, next) => {
   res.setHeader('Acess-Controll-Allow-Origin', '*');
