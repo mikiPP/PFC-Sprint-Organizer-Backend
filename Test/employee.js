@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 const { expect } = require('chai');
 const sinon = require('sinon');
-const mongoose = require('mongoose');
 
 const Employee = require('../Models/employee');
 const employeeController = require('../Controllers/employeeController');
@@ -18,7 +17,7 @@ const employee = new Employee({
 });
 
 describe('Employee controller - CRUD', function () {
-  it('Employee successfully created sshould return status of 201 and the new Employee', function (done) {
+  it('Employee successfully created should return status of 201 and the new Employee', function (done) {
     sinon.stub(Employee.prototype, 'save');
 
     Employee.prototype.save.returns(
@@ -29,22 +28,20 @@ describe('Employee controller - CRUD', function () {
       body: employee,
     };
 
-    expect(
-      employeeController
-        .addEmployee(req, res, () => {})
-        .then((result) => {
-          expect(result.name).to.equal(employee.name);
-          expect(result.surnames).to.equal(employee.surnames);
-          expect(result.vacationDays).to.equal(employee.vacationDays);
-          expect(result.hoursDay).to.equal(employee.hoursDay);
-          expect(result.hoursWeek).to.equal(employee.hoursWeek);
-          expect(result.password).to.equal(employee.password);
-          expect(result.profile).to.equal(employee.profile);
-          expect(res.statusCode).to.equal(201);
-          Employee.prototype.save.restore();
-          done();
-        })
-    );
+    employeeController
+      .addEmployee(req, res, () => {})
+      .then((result) => {
+        expect(result.name).to.equal(employee.name);
+        expect(result.surnames).to.equal(employee.surnames);
+        expect(result.vacationDays).to.equal(employee.vacationDays);
+        expect(result.hoursDay).to.equal(employee.hoursDay);
+        expect(result.hoursWeek).to.equal(employee.hoursWeek);
+        expect(result.password).to.equal(employee.password);
+        expect(result.profile).to.equal(employee.profile);
+        expect(res.statusCode).to.equal(201);
+        Employee.prototype.save.restore();
+        done();
+      });
   });
   it('If id given to get the employee does exist return an status of 200 and the employee', function (done) {
     sinon.stub(Employee, 'findById');
@@ -52,7 +49,7 @@ describe('Employee controller - CRUD', function () {
     Employee.findById.returns(new Promise((resolve) => resolve(employee)));
 
     const req = {
-      params: { employeeId: 2 },
+      params: { employeeId: '5ec8df3fcc6d2338d4a071b8' },
     };
 
     employeeController
@@ -162,16 +159,15 @@ describe('Employee controller - ERROR HANDLER', function () {
 
     res.statusCode = undefined;
 
-    expect(
-      employeeController
-        .addEmployee(req, res, () => {})
-        .then((result) => {
-          expect(result).to.not.equal(employee);
-          expect(res.statusCode).to.not.equal(200);
-          Employee.prototype.save.restore();
-          done();
-        })
-    );
+    employeeController
+      .addEmployee(req, res, () => {})
+      .then((result) => {
+        expect(employeeController.addEmployee).to.throw();
+        expect(result).to.not.equal(employee);
+        expect(res.statusCode).to.not.equal(200);
+        Employee.prototype.save.restore();
+        done();
+      });
   });
 
   it('If the id given to get the employee does not exist should return an status of 500 and an error', function (done) {
@@ -184,12 +180,14 @@ describe('Employee controller - ERROR HANDLER', function () {
     };
     res.statusCode = undefined;
 
-    employeeController.getEmployeeById(req, res, () => {
-      expect(employeeController.getEmployeeById).to.throw();
-      expect(res.statusCode).not.to.equal(200);
-      Employee.findById.restore();
-      done();
-    });
+    employeeController
+      .getEmployeeById(req, res, () => {})
+      .then(() => {
+        expect(employeeController.getEmployeeById).to.throw();
+        expect(res.statusCode).not.to.equal(200);
+        Employee.findById.restore();
+        done();
+      });
   });
 
   it('error when employee is beeing updated should return an error and status of 500', function (done) {
