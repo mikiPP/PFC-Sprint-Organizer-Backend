@@ -5,6 +5,7 @@ const utils = require('../Util/utils');
 module.exports.getCompany = (req, res, next) => {
   const { companyId } = req.params;
 
+  utils.checkIfIdIsValid(companyId, res, next);
   return Company.findById(companyId)
     .then((company) => {
       if (!company) {
@@ -18,9 +19,7 @@ module.exports.getCompany = (req, res, next) => {
       res.status(200).json({ message: 'Company have been fetched', company });
       return company;
     })
-    .catch((err) => {
-      return utils.errorHandler(err, res, next);
-    });
+    .catch((err) => utils.errorHandler(err, res, next));
 };
 
 exports.addCompany = (req, res, next) => {
@@ -42,9 +41,7 @@ exports.addCompany = (req, res, next) => {
         .json({ message: 'Company created!', company: companySaved });
       return companySaved;
     })
-    .catch((err) => {
-      return utils.errorHandler(err, res, next);
-    });
+    .catch((err) => utils.errorHandler(err, res, next));
 };
 
 exports.updateCompany = (req, res, next) => {
@@ -55,17 +52,11 @@ exports.updateCompany = (req, res, next) => {
   utils.checkIfIdIsValid(companyId, res, next);
   return Company.findById(companyId)
     .then((company) => {
-      if (company) {
-        company.name = updatedName;
-        company.disabled = updatedDisabled;
+      utils.checkNotFound(company, companyId, 'company');
+      company.name = updatedName || company.name;
+      company.disabled = updatedDisabled || company.disabled;
 
-        return company.save();
-      }
-      const error = new Error(
-        `Project with id: ${companyId} has not been found!`
-      );
-      error.statusCode = 404;
-      throw error;
+      return company.save();
     })
     .then((result) => {
       res.status(201).json({ message: 'Company updated!', company: result });
@@ -80,28 +71,21 @@ exports.deleteCompany = (req, res, next) => {
   const { companyId } = req.params;
 
   utils.checkIfIdIsValid(companyId, res, next);
+
   return Company.findByIdAndDelete(companyId)
     .then((company) => {
-      if (company) {
-        return company;
-      }
-      const error = new Error(
-        `Company with id: ${companyId} has not been found!`
-      );
-      error.statusCode = 404;
-      throw error;
+      utils.checkNotFound(company, companyId, 'company');
+      return company;
     })
     .then((company) => {
       return Project.deleteMany({ companyId: company._id }).then(() => {
         return company;
       });
     })
-    .then((company) => {
-      console.log('something');
+    .then(() => {
       res
         .status(200)
         .json({ message: `Company with id: ${companyId} has been deleted` });
-      return company;
     })
     .catch((err) => {
       return utils.errorHandler(err, res, next);

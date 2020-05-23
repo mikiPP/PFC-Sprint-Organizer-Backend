@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const Company = require('../Models/company');
 const Project = require('../Models/project');
 const companyController = require('../Controllers/companyController');
-const { res } = require('../Util/utils').fakeController;
+const res = require('../Util/utils').fakeRes;
 
 const company = {
   name: 'test',
@@ -76,6 +76,7 @@ describe('Company Controller - CRUD', function () {
       companyController
         .deleteCompany(req, res, () => {})
         .then(() => {
+          expect(Company.findByIdAndDelete).not.to.throw();
           expect(res.statusCode).to.equal(200);
           Company.findByIdAndDelete.restore();
           Project.deleteMany.restore();

@@ -1,15 +1,13 @@
 const mongoose = require('mongoose');
 
-module.exports.fakeController = {
-  res: {
-    statusCode: 500,
-    status(code) {
-      this.statusCode = code;
-      return this;
-    },
-    json(data) {
-      return data;
-    },
+module.exports.fakeRes = {
+  statusCode: 500,
+  status(code) {
+    this.statusCode = code;
+    return this;
+  },
+  json(data) {
+    return data;
   },
 };
 
@@ -32,4 +30,12 @@ module.exports.errorHandler = function (error, res, next) {
     res.statusCode = 500;
   }
   return next(error);
+};
+
+module.exports.checkNotFound = (object, id, className) => {
+  if (!object) {
+    const error = new Error(` Coudn't find ${className} by the id: ${id} `);
+    error.statusCode = 404;
+    throw error;
+  }
 };
