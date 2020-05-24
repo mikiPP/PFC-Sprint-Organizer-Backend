@@ -41,12 +41,14 @@ exports.addSprint = (req, res, next) => {
     .save()
     .then((sprintSaved) => {
       if (!sprintSaved) {
-        const error = new Error('The employee has not been created');
+        const error = new Error('The sprint has not been created');
         error.statusCode = 500;
         throw error;
       }
 
-      res.status(201).json({ message: 'Sprint has been created', sprintSaved });
+      res
+        .status(201)
+        .json({ message: 'Sprint has been created', spirnt: sprintSaved });
       return sprintSaved;
     })
     .catch((err) => utils.errorHandler(err, res, next));
