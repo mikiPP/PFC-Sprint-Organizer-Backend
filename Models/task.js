@@ -19,6 +19,11 @@ const taskSchema = new Schema({
     required: true,
   },
 
+  // type: {
+  //       type: String,
+  //       default: 'New feature',
+  //   }
+
   //   creatorId: {
   //     type: Schema.Types.ObjectId,
   //     ref: 'Employee',
