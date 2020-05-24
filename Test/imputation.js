@@ -172,10 +172,10 @@ describe('Imputation controller - ERROR HANDLER', function () {
     res.statusCode = undefined;
 
     imputationController
-      .findImputationById(req, res, () => {})
+      .getImputationById(req, res, () => {})
       .then((result) => {
         expect(result).to.not.equal(imputation);
-        expect(imputationController.imputationById).to.throw();
+        expect(imputationController.getImputationById).to.throw();
         expect(res.statusCode).not.to.equal(200);
         Imputation.findById.restore();
         done();

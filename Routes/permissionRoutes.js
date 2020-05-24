@@ -1,6 +1,6 @@
 const express = require('express');
 
-const permissionController = require('../Controllers/permisionController');
+const permissionController = require('../Controllers/permissionController');
 
 const router = express.Router();
 
