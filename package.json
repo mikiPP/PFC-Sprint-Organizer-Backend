@@ -22,9 +22,11 @@
   },
   "homepage": "https://github.com/mikiPP/PFC-Sprint-Organizer#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mocha": "^7.1.2",
     "mongodb": "^3.5.7",
     "mongoose": "^5.9.13",
