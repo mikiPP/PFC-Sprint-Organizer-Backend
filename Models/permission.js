@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const permisionSchema = new Schema({
+const permissionSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -18,4 +18,4 @@ const permisionSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('Permision', permisionSchema);
+module.exports = mongoose.model('Permission', permissionSchema);

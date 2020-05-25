@@ -29,12 +29,12 @@ exports.addPermission = (req, res, next) => {
     .save()
     .then((permissionSaved) => {
       if (!permissionSaved) {
-        const error = new Error('The imputation has not been created');
+        const error = new Error('The permission has not been created');
         error.statusCode = 500;
         throw error;
       }
       res.status(201).json({
-        message: 'Imputation has been created!',
+        message: 'permission has been created!',
         permission: permissionSaved,
       });
       return permissionSaved;
