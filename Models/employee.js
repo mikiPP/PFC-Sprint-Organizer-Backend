@@ -9,6 +9,11 @@ const employeeSchema = new Schema(
       required: true,
     },
 
+    email: {
+      type: String,
+      required: true,
+    },
+
     surnames: {
       type: String,
     },
@@ -25,7 +30,6 @@ const employeeSchema = new Schema(
     roleId: {
       type: Schema.Types.ObjectId,
       ref: 'Role',
-      required: true,
     },
 
     projects: [
@@ -37,7 +41,7 @@ const employeeSchema = new Schema(
 
     companyId: {
       type: Schema.Types.ObjectId,
-      ref: 'Role',
+      ref: 'Company',
       required: true,
     },
 

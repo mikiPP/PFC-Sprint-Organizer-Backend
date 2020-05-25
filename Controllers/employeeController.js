@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const Employee = require('../Models/employee');
 const utils = require('../Util/utils');
 
@@ -17,6 +18,7 @@ exports.getEmployeeById = (req, res, next) => {
 
 exports.addEmployee = (req, res, next) => {
   const { name } = req.body;
+  const { email } = req.body;
   const { surnames } = req.body;
   const { birthDay } = req.body;
   const { password } = req.body;
@@ -28,24 +30,28 @@ exports.addEmployee = (req, res, next) => {
   const { projects } = req.body;
   const { companyId } = req.body;
 
-  const employee = new Employee({
-    name,
-    surnames,
-    birthDay,
-    password,
-    profile,
-    vacationDays,
-    hoursDay,
-    hoursWeek,
-    roleId,
-    projects,
-    companyId,
-  });
+  return bcrypt
+    .hash(password, 12)
+    .then((passwordHashed) => {
+      const employee = new Employee({
+        name,
+        email,
+        surnames,
+        birthDay,
+        password: passwordHashed,
+        profile,
+        vacationDays,
+        hoursDay,
+        hoursWeek,
+        roleId,
+        projects,
+        companyId,
+      });
 
-  utils.cleanObject(employee);
+      utils.cleanObject(employee);
 
-  return employee
-    .save()
+      return employee.save();
+    })
     .then((employeeSaved) => {
       utils.checkSavedData(employeeSaved, 'employee');
 
@@ -60,7 +66,10 @@ exports.addEmployee = (req, res, next) => {
 exports.updateEmployee = (req, res, next) => {
   const { employeeId } = req.params;
 
+  utils.checkIfIdIsValid(employeeId, res, next);
+
   const { name } = req.body;
+  const { email } = req.body;
   const { surnames } = req.body;
   const { birthDay } = req.body;
   const { password } = req.body;
@@ -73,13 +82,12 @@ exports.updateEmployee = (req, res, next) => {
   const { projects } = req.body;
   const { companyId } = req.body;
 
-  utils.checkIfIdIsValid(employeeId, res, next);
-
   return Employee.findById(employeeId)
     .then((employee) => {
       utils.checkNotFound(employee, employeeId, 'employee');
 
       employee.name = name || employee.name;
+      employee.email = email || employee.email;
       employee.surnames = surnames || employee.surnames;
       employee.birthDay = birthDay || employee.birthDay;
       employee.password = password || employee.password;
@@ -121,6 +129,7 @@ exports.deleteEmployee = (req, res, next) => {
 
 exports.findByFilter = (req, res, next) => {
   const { name } = req.body;
+  const { email } = req.body;
   const { surnames } = req.body;
   const { birthDay } = req.body;
   const { password } = req.body;
@@ -135,6 +144,7 @@ exports.findByFilter = (req, res, next) => {
 
   const filter = {
     name,
+    email,
     surnames,
     birthDay,
     profile,
