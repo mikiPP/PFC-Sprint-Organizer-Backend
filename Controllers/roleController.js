@@ -29,11 +29,8 @@ exports.addRole = (req, res, next) => {
   return role
     .save()
     .then((roleSaved) => {
-      if (!roleSaved) {
-        const error = new Error('The rol has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(roleSaved, 'role');
+
       res.status(201).json({
         message: ' Role has been inserted!',
         role: roleSaved,

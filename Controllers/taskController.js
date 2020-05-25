@@ -46,11 +46,8 @@ exports.addTask = (req, res, next) => {
   return task
     .save()
     .then((taskSaved) => {
-      if (!taskSaved) {
-        const error = new Error('The task has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(taskSaved, 'task');
+
       res.status(201).json({ message: 'Task inserted!', task: taskSaved });
       return taskSaved;
     })

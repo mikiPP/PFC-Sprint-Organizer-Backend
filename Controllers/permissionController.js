@@ -28,11 +28,8 @@ exports.addPermission = (req, res, next) => {
   return permission
     .save()
     .then((permissionSaved) => {
-      if (!permissionSaved) {
-        const error = new Error('The permission has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(permissionSaved, 'permission');
+
       res.status(201).json({
         message: 'permission has been created!',
         permission: permissionSaved,

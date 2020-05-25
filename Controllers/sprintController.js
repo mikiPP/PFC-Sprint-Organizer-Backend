@@ -44,11 +44,7 @@ exports.addSprint = (req, res, next) => {
   return sprint
     .save()
     .then((sprintSaved) => {
-      if (!sprintSaved) {
-        const error = new Error('The sprint has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(sprintSaved, 'sprint');
 
       res
         .status(201)

@@ -47,11 +47,7 @@ exports.addEmployee = (req, res, next) => {
   return employee
     .save()
     .then((employeeSaved) => {
-      if (!employeeSaved) {
-        const error = new Error('The employee has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(employeeSaved, 'employee');
 
       res
         .status(201)

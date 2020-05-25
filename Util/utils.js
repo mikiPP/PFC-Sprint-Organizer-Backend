@@ -50,7 +50,19 @@ module.exports.checkFilteredData = (object, res, objectName) => {
     return object;
   }
 
-  const error = new Error('Something went wrong...');
+  const error = new Error(
+    'Something wrong  have ocurred please, try it again !'
+  );
   error.statusCode = 404;
   throw error;
+};
+
+module.exports.checkSavedData = (objectSaved, objectName) => {
+  if (!objectSaved) {
+    const error = new Error(
+      `The ${objectName} has not been created, please try it again!`
+    );
+    error.statusCode = 500;
+    throw error;
+  }
 };

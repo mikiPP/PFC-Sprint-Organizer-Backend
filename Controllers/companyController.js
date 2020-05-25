@@ -30,11 +30,7 @@ exports.addCompany = (req, res, next) => {
   return company
     .save()
     .then((companySaved) => {
-      if (!companySaved) {
-        const error = new Error('The company has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(companySaved, 'company');
 
       res
         .status(201)

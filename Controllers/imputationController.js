@@ -35,11 +35,7 @@ exports.addImputation = (req, res, next) => {
   return imputation
     .save()
     .then((imputationSaved) => {
-      if (!imputationSaved) {
-        const error = new Error('The imputation has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(imputationSaved, 'imputation');
 
       res.status(201).json({
         message: 'Imputation has been created!',
