@@ -10,6 +10,7 @@ const employeeRoutes = require('./Routes/employeeRoutes');
 const sprintRoutes = require('./Routes/sprintRoutes');
 const imputationRoutes = require('./Routes/imputationRoutes');
 const permissionRoutes = require('./Routes/permissionRoutes');
+const roleRoutes = require('./Routes/roleRoutes');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use('/employee', employeeRoutes, bodyParser);
 app.use('/sprint', sprintRoutes, bodyParser);
 app.use('/imputation', imputationRoutes, bodyParser);
 app.use('/permission', permissionRoutes, bodyParser);
+app.use('/role', roleRoutes, bodyParser);
 
 app.use((req, res, next) => {
   res.setHeader('Acess-Controll-Allow-Origin', '*');
