@@ -90,7 +90,7 @@ exports.findByFilter = (req, res, next) => {
 
   return Permission.find(filter)
     .then((permissions) =>
-      utils.checkFilteredDataData(permissions, res, 'permissions')
+      utils.checkFilteredData(permissions, res, 'permissions')
     )
     .catch((err) => utils.errorHandler(err, res, next));
 };
