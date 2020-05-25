@@ -23,6 +23,8 @@ exports.addSprint = (req, res, next) => {
   const { scheduledHours } = req.body;
   const { realHours } = req.body;
   const { projectId } = req.body;
+  const { employees } = req.body;
+  const { tasks } = req.body;
 
   const sprint = new Sprint({
     name,
@@ -33,6 +35,8 @@ exports.addSprint = (req, res, next) => {
     scheduledHours,
     realHours,
     projectId,
+    employees,
+    tasks,
   });
 
   utils.cleanObject(sprint);
@@ -66,6 +70,8 @@ exports.updateSprint = (req, res, next) => {
   const { scheduledHours } = req.body;
   const { realHours } = req.body;
   const { projectId } = req.body;
+  const { employees } = req.body;
+  const { tasks } = req.body;
 
   return Sprint.findById(sprintId)
     .then((sprint) => {
@@ -79,6 +85,8 @@ exports.updateSprint = (req, res, next) => {
       sprint.scheduledHours = scheduledHours || sprint.scheduledHours;
       sprint.realHours = realHours || sprint.realHours;
       sprint.projectId = projectId || sprint.projectId;
+      sprint.employees = employees || sprint.employees;
+      sprint.tasks = tasks || sprint.tasks;
 
       return sprint.save();
     })
@@ -114,6 +122,8 @@ exports.findByFilter = (req, res, next) => {
   const { scheduledHours } = req.body;
   const { realHours } = req.body;
   const { projectId } = req.body;
+  const { employees } = req.body;
+  const { tasks } = req.body;
 
   const filter = {
     name,
@@ -124,6 +134,8 @@ exports.findByFilter = (req, res, next) => {
     scheduledHours,
     realHours,
     projectId,
+    employees,
+    tasks,
   };
 
   utils.cleanObject(filter);

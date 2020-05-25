@@ -2,27 +2,30 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const porjectSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
+const porjectSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
 
-  scrumMaster: {
-    type: String,
-    required: true,
-  },
+    scrumMaster: {
+      type: String,
+      required: true,
+    },
 
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
 
-  companyId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Company',
-    required: true,
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Company',
+      required: true,
+    },
   },
-});
+  { timestamps: true }
+);
 
 module.exports = mongoose.model('Project', porjectSchema);

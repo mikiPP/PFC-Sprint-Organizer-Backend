@@ -24,6 +24,9 @@ exports.addEmployee = (req, res, next) => {
   const { vacationDays } = req.body;
   const { hoursDay } = req.body;
   const { hoursWeek } = req.body;
+  const { roleId } = req.body;
+  const { projects } = req.body;
+  const { companyId } = req.body;
 
   const employee = new Employee({
     name,
@@ -34,6 +37,9 @@ exports.addEmployee = (req, res, next) => {
     vacationDays,
     hoursDay,
     hoursWeek,
+    roleId,
+    projects,
+    companyId,
   });
 
   utils.cleanObject(employee);
@@ -67,6 +73,9 @@ exports.updateEmployee = (req, res, next) => {
   const { hoursDay } = req.body;
   const { hoursWeek } = req.body;
   const { disabled } = req.body;
+  const { roleId } = req.body;
+  const { projects } = req.body;
+  const { companyId } = req.body;
 
   utils.checkIfIdIsValid(employeeId, res, next);
 
@@ -83,6 +92,9 @@ exports.updateEmployee = (req, res, next) => {
       employee.hoursDay = hoursDay || employee.hoursDay;
       employee.hoursWeek = hoursWeek || employee.hoursWeek;
       employee.disabled = disabled || employee.disabled;
+      employee.roleId = roleId || employee.roleId;
+      employee.projects = projects || employee.projects;
+      employee.companyId = companyId || employee.companyId;
 
       return employee.save();
     })
@@ -121,6 +133,9 @@ exports.findByFilter = (req, res, next) => {
   const { hoursDay } = req.body;
   const { hoursWeek } = req.body;
   const { disabled } = req.body;
+  const { roleId } = req.body;
+  const { projects } = req.body;
+  const { companyId } = req.body;
 
   const filter = {
     name,
@@ -132,10 +147,12 @@ exports.findByFilter = (req, res, next) => {
     hoursDay,
     hoursWeek,
     disabled,
+    roleId,
+    projects,
+    companyId,
   };
 
   utils.cleanObject(filter);
-
   return Employee.find(filter)
     .then((employees) => {
       if (employees) {
