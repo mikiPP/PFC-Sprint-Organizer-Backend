@@ -2,7 +2,7 @@ const Company = require('../Models/company');
 const Project = require('../Models/project');
 const utils = require('../Util/utils');
 
-module.exports.getCompany = (req, res, next) => {
+module.exports.getCompanyById = (req, res, next) => {
   const { companyId } = req.params;
 
   utils.checkIfIdIsValid(companyId, res, next);
@@ -55,7 +55,7 @@ exports.updateCompany = (req, res, next) => {
       return company.save();
     })
     .then((result) => {
-      res.status(201).json({ message: 'Company updated!', company: result });
+      res.status(200).json({ message: 'Company updated!', company: result });
       return result;
     })
     .catch((err) => {
