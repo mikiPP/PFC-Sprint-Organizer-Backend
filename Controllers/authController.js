@@ -1,10 +1,18 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 const Employee = require('../Models/employee');
 const utils = require('../Util/utils');
 const employeeController = require('./employeeController');
 
 exports.signUp = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error('Validation failed.');
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
+  }
   return employeeController
     .addEmployee(req, res, next)
     .then((employee) => employee)
