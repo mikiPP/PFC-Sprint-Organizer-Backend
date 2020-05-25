@@ -92,17 +92,8 @@ exports.findByFilter = (req, res, next) => {
   utils.cleanObject(filter);
 
   return Permission.find(filter)
-    .then((permissions) => {
-      if (permissions) {
-        res.status(200).json({
-          message: 'permissions have been fetched successfully',
-          permissions,
-        });
-        return permissions;
-      }
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((permissions) =>
+      utils.checkFilteredDataData(permissions, res, 'permissions')
+    )
     .catch((err) => utils.errorHandler(err, res, next));
 };

@@ -142,17 +142,6 @@ exports.findByFilter = (req, res, next) => {
   utils.cleanObject(filter);
 
   return Task.find(filter)
-    .then((tasks) => {
-      if (tasks !== undefined) {
-        res
-          .status(200)
-          .json({ message: 'Tasks has been fetched successfully', tasks });
-        return tasks;
-      }
-
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((tasks) => utils.checkFilteredData(tasks, res, 'tasks'))
     .catch((err) => utils.errorHandler(err, res, next));
 };

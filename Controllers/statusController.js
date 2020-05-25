@@ -90,18 +90,6 @@ exports.findByFilter = (req, res, next) => {
   utils.cleanObject(filter);
 
   return Status.find(filter)
-    .then((statuses) => {
-      if (statuses) {
-        res.status(200).json({
-          message: ' Statuses has been fetched successfully',
-          statuses,
-        });
-        return statuses;
-      }
-
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((statuses) => utils.checkFilteredData(statuses, res, 'statuses'))
     .catch((err) => utils.errorHandler(err, res, next));
 };

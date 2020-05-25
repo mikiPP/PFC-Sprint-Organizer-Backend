@@ -39,3 +39,18 @@ module.exports.checkNotFound = (object, id, className) => {
     throw error;
   }
 };
+
+module.exports.checkFilteredData = (object, res, objectName) => {
+  if (object) {
+    const jsonData = {};
+    jsonData.message = `${objectName} has been fetched successfully`;
+    jsonData[objectName] = object;
+    res.status(200).json(jsonData);
+
+    return object;
+  }
+
+  const error = new Error('Something went wrong...');
+  error.statusCode = 404;
+  throw error;
+};

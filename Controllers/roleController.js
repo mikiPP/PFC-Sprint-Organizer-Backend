@@ -96,17 +96,6 @@ exports.findByFilter = (req, res, next) => {
   utils.cleanObject(filter);
 
   return Role.find(filter)
-    .then((roles) => {
-      if (roles) {
-        res.status(200).json({
-          message: 'roles have been fetched successfully',
-          roles,
-        });
-        return roles;
-      }
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((roles) => utils.checkFilteredData(roles, res, 'roles'))
     .catch((err) => utils.errorHandler(err, res, next));
 };

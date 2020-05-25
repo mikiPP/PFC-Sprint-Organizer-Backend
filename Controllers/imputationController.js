@@ -107,17 +107,8 @@ exports.findByFilter = (req, res, next) => {
   utils.cleanObject(filter);
 
   return Imputation.find(filter)
-    .then((imputations) => {
-      if (imputations) {
-        res.status(200).json({
-          message: 'Imputations have been fetched successfully',
-          imputations,
-        });
-        return imputations;
-      }
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((imputations) =>
+      utils.checkFilteredData(imputations, res, 'imputations')
+    )
     .catch((err) => utils.errorHandler(err, res, next));
 };

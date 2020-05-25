@@ -92,17 +92,6 @@ exports.findByFilter = (req, res, next) => {
   utils.cleanObject(filter);
 
   return Project.find(filter)
-    .then((projects) => {
-      if (projects !== undefined) {
-        res.status(200).json({
-          message: 'Projects has been fetched successfully.',
-          projects,
-        });
-        return projects;
-      }
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((projects) => utils.checkFilteredData(projects, res, 'projects'))
     .catch((err) => utils.errorHandler(err, res, next));
 };

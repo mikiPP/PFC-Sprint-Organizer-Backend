@@ -141,17 +141,6 @@ exports.findByFilter = (req, res, next) => {
   utils.cleanObject(filter);
 
   return Sprint.find(filter)
-    .then((sprints) => {
-      if (sprints) {
-        res.status(200).json({
-          message: 'Sprints has been fetched successfully',
-          sprints,
-        });
-        return sprints;
-      }
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((sprints) => utils.checkFilteredData(sprints, res, 'sprints'))
     .catch((err) => utils.errorHandler(err, res, next));
 };
