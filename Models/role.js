@@ -2,16 +2,15 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const porjectSchema = new Schema(
+const roleSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
     },
 
-    scrumMaster: {
+    description: {
       type: String,
-      required: true,
     },
 
     disabled: {
@@ -19,13 +18,15 @@ const porjectSchema = new Schema(
       default: false,
     },
 
-    companyId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Company',
-      required: true,
-    },
+    permissions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Permission',
+        required: true,
+      },
+    ],
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Project', porjectSchema);
+module.exports = mongoose.model('Role', roleSchema);

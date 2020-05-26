@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const Employee = require('../Models/employee');
 const utils = require('../Util/utils');
 
@@ -17,6 +18,7 @@ exports.getEmployeeById = (req, res, next) => {
 
 exports.addEmployee = (req, res, next) => {
   const { name } = req.body;
+  const { email } = req.body;
   const { surnames } = req.body;
   const { birthDay } = req.body;
   const { password } = req.body;
@@ -24,28 +26,34 @@ exports.addEmployee = (req, res, next) => {
   const { vacationDays } = req.body;
   const { hoursDay } = req.body;
   const { hoursWeek } = req.body;
+  const { roleId } = req.body;
+  const { projects } = req.body;
+  const { companyId } = req.body;
 
-  const employee = new Employee({
-    name,
-    surnames,
-    birthDay,
-    password,
-    profile,
-    vacationDays,
-    hoursDay,
-    hoursWeek,
-  });
+  return bcrypt
+    .hash(password, 12)
+    .then((passwordHashed) => {
+      const employee = new Employee({
+        name,
+        email,
+        surnames,
+        birthDay,
+        password: passwordHashed,
+        profile,
+        vacationDays,
+        hoursDay,
+        hoursWeek,
+        roleId,
+        projects,
+        companyId,
+      });
 
-  utils.cleanObject(employee);
+      utils.cleanObject(employee);
 
-  return employee
-    .save()
+      return employee.save();
+    })
     .then((employeeSaved) => {
-      if (!employeeSaved) {
-        const error = new Error('The employee has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(employeeSaved, 'employee');
 
       res
         .status(201)
@@ -58,7 +66,10 @@ exports.addEmployee = (req, res, next) => {
 exports.updateEmployee = (req, res, next) => {
   const { employeeId } = req.params;
 
+  utils.checkIfIdIsValid(employeeId, res, next);
+
   const { name } = req.body;
+  const { email } = req.body;
   const { surnames } = req.body;
   const { birthDay } = req.body;
   const { password } = req.body;
@@ -67,14 +78,16 @@ exports.updateEmployee = (req, res, next) => {
   const { hoursDay } = req.body;
   const { hoursWeek } = req.body;
   const { disabled } = req.body;
-
-  utils.checkIfIdIsValid(employeeId, res, next);
+  const { roleId } = req.body;
+  const { projects } = req.body;
+  const { companyId } = req.body;
 
   return Employee.findById(employeeId)
     .then((employee) => {
       utils.checkNotFound(employee, employeeId, 'employee');
 
       employee.name = name || employee.name;
+      employee.email = email || employee.email;
       employee.surnames = surnames || employee.surnames;
       employee.birthDay = birthDay || employee.birthDay;
       employee.password = password || employee.password;
@@ -83,6 +96,9 @@ exports.updateEmployee = (req, res, next) => {
       employee.hoursDay = hoursDay || employee.hoursDay;
       employee.hoursWeek = hoursWeek || employee.hoursWeek;
       employee.disabled = disabled || employee.disabled;
+      employee.roleId = roleId || employee.roleId;
+      employee.projects = projects || employee.projects;
+      employee.companyId = companyId || employee.companyId;
 
       return employee.save();
     })
@@ -113,6 +129,7 @@ exports.deleteEmployee = (req, res, next) => {
 
 exports.findByFilter = (req, res, next) => {
   const { name } = req.body;
+  const { email } = req.body;
   const { surnames } = req.body;
   const { birthDay } = req.body;
   const { password } = req.body;
@@ -121,9 +138,13 @@ exports.findByFilter = (req, res, next) => {
   const { hoursDay } = req.body;
   const { hoursWeek } = req.body;
   const { disabled } = req.body;
+  const { roleId } = req.body;
+  const { projects } = req.body;
+  const { companyId } = req.body;
 
   const filter = {
     name,
+    email,
     surnames,
     birthDay,
     profile,
@@ -132,22 +153,13 @@ exports.findByFilter = (req, res, next) => {
     hoursDay,
     hoursWeek,
     disabled,
+    roleId,
+    projects,
+    companyId,
   };
 
   utils.cleanObject(filter);
-
   return Employee.find(filter)
-    .then((employees) => {
-      if (employees) {
-        res.status(200).json({
-          message: 'Employees has been fetched successfully',
-          employees,
-        });
-        return employees;
-      }
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((employees) => utils.checkFilteredData(employees, res, 'employees'))
     .catch((err) => utils.errorHandler(err, res, next));
 };

@@ -18,17 +18,27 @@ exports.addTask = (req, res, next) => {
   const { name } = req.body;
   const { description } = req.body;
   const { projectId } = req.body;
+  const { type } = req.body;
+  const { creatorId } = req.body;
+  const { realizerId } = req.body;
+  const { sprintId } = req.body;
   const { estimatedTime } = req.body;
   const { realTime } = req.body;
   const { backlog } = req.body;
+  const { statusId } = req.body;
 
   const task = new Task({
     name,
     description,
     projectId,
+    type,
+    creatorId,
+    realizerId,
+    sprintId,
     estimatedTime,
     realTime,
     backlog,
+    statusId,
   });
 
   utils.cleanObject(task);
@@ -36,11 +46,8 @@ exports.addTask = (req, res, next) => {
   return task
     .save()
     .then((taskSaved) => {
-      if (!taskSaved) {
-        const error = new Error('The task has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(taskSaved, 'task');
+
       res.status(201).json({ message: 'Task inserted!', task: taskSaved });
       return taskSaved;
     })
@@ -53,9 +60,14 @@ exports.updateTask = (req, res, next) => {
   const { name } = req.body;
   const { description } = req.body;
   const { projectId } = req.body;
+  const { type } = req.body;
+  const { creatorId } = req.body;
+  const { realizerId } = req.body;
+  const { sprintId } = req.body;
   const { estimatedTime } = req.body;
   const { realTime } = req.body;
   const { backlog } = req.body;
+  const { statusId } = req.body;
 
   utils.checkIfIdIsValid(taskId, res, next);
 
@@ -66,9 +78,14 @@ exports.updateTask = (req, res, next) => {
       task.name = name || task.name;
       task.description = description || task.description;
       task.projectId = projectId || task.projectId;
+      task.type = type || task.type;
+      task.creatorId = creatorId || task.creatorId;
+      task.realizerId = realizerId || task.realizerId;
+      task.sprintId = sprintId || task.sprintId;
       task.estimatedTime = estimatedTime || task.estimatedTime;
       task.realTime = realTime || task.realTime;
       task.backlog = backlog || task.backlog;
+      task.statusId = statusId || task.statusId;
       return task.save();
     })
     .then((task) => {
@@ -96,33 +113,32 @@ exports.findByFilter = (req, res, next) => {
   const { name } = req.body;
   const { description } = req.body;
   const { projectId } = req.body;
+  const { type } = req.body;
+  const { creatorId } = req.body;
+  const { realizerId } = req.body;
+  const { sprintId } = req.body;
   const { estimatedTime } = req.body;
   const { realTime } = req.body;
   const { backlog } = req.body;
+  const { statusId } = req.body;
 
   const filter = {
     name,
     description,
     projectId,
+    type,
+    creatorId,
+    realizerId,
+    sprintId,
     estimatedTime,
     realTime,
     backlog,
+    statusId,
   };
 
   utils.cleanObject(filter);
 
   return Task.find(filter)
-    .then((tasks) => {
-      if (tasks !== undefined) {
-        res
-          .status(200)
-          .json({ message: 'Tasks has been fetched successfully', tasks });
-        return tasks;
-      }
-
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((tasks) => utils.checkFilteredData(tasks, res, 'tasks'))
     .catch((err) => utils.errorHandler(err, res, next));
 };

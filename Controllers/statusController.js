@@ -26,11 +26,7 @@ exports.addStatus = (req, res, next) => {
   return status
     .save()
     .then((statusSaved) => {
-      if (!statusSaved) {
-        const error = new Error('The status has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(statusSaved, 'status');
 
       res
         .status(201)
@@ -90,18 +86,6 @@ exports.findByFilter = (req, res, next) => {
   utils.cleanObject(filter);
 
   return Status.find(filter)
-    .then((statuses) => {
-      if (statuses) {
-        res.status(200).json({
-          message: ' Statuses has been fetched successfully',
-          statuses,
-        });
-        return statuses;
-      }
-
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((statuses) => utils.checkFilteredData(statuses, res, 'statuses'))
     .catch((err) => utils.errorHandler(err, res, next));
 };

@@ -23,6 +23,8 @@ exports.addSprint = (req, res, next) => {
   const { scheduledHours } = req.body;
   const { realHours } = req.body;
   const { projectId } = req.body;
+  const { employees } = req.body;
+  const { tasks } = req.body;
 
   const sprint = new Sprint({
     name,
@@ -33,6 +35,8 @@ exports.addSprint = (req, res, next) => {
     scheduledHours,
     realHours,
     projectId,
+    employees,
+    tasks,
   });
 
   utils.cleanObject(sprint);
@@ -40,13 +44,11 @@ exports.addSprint = (req, res, next) => {
   return sprint
     .save()
     .then((sprintSaved) => {
-      if (!sprintSaved) {
-        const error = new Error('The employee has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(sprintSaved, 'sprint');
 
-      res.status(201).json({ message: 'Sprint has been created', sprintSaved });
+      res
+        .status(201)
+        .json({ message: 'Sprint has been created', spirnt: sprintSaved });
       return sprintSaved;
     })
     .catch((err) => utils.errorHandler(err, res, next));
@@ -64,6 +66,8 @@ exports.updateSprint = (req, res, next) => {
   const { scheduledHours } = req.body;
   const { realHours } = req.body;
   const { projectId } = req.body;
+  const { employees } = req.body;
+  const { tasks } = req.body;
 
   return Sprint.findById(sprintId)
     .then((sprint) => {
@@ -77,6 +81,8 @@ exports.updateSprint = (req, res, next) => {
       sprint.scheduledHours = scheduledHours || sprint.scheduledHours;
       sprint.realHours = realHours || sprint.realHours;
       sprint.projectId = projectId || sprint.projectId;
+      sprint.employees = employees || sprint.employees;
+      sprint.tasks = tasks || sprint.tasks;
 
       return sprint.save();
     })
@@ -112,6 +118,8 @@ exports.findByFilter = (req, res, next) => {
   const { scheduledHours } = req.body;
   const { realHours } = req.body;
   const { projectId } = req.body;
+  const { employees } = req.body;
+  const { tasks } = req.body;
 
   const filter = {
     name,
@@ -122,22 +130,13 @@ exports.findByFilter = (req, res, next) => {
     scheduledHours,
     realHours,
     projectId,
+    employees,
+    tasks,
   };
 
   utils.cleanObject(filter);
 
   return Sprint.find(filter)
-    .then((sprints) => {
-      if (sprints) {
-        res.status(200).json({
-          message: 'Sprints has been fetched successfully',
-          sprints,
-        });
-        return sprints;
-      }
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((sprints) => utils.checkFilteredData(sprints, res, 'sprints'))
     .catch((err) => utils.errorHandler(err, res, next));
 };

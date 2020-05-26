@@ -1,0 +1,8 @@
+{
+  "env": {
+    "MONGO_USER": "node",
+    "MONGO_PASSWORD": "XGeSsA5LgqKV8%23D",
+    "MONGO_DEFAULT_DATABASE": "test",
+    "SECRET": "dWJcaHVt5wOGCmxGAbt3ApKNcE47i4Hz5ESTjvRFXQ9smeFUWXFpWmJMUP3yXWh"
+  }
+}

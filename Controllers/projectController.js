@@ -27,11 +27,8 @@ exports.addProject = (req, res, next) => {
   return project
     .save()
     .then((projectSaved) => {
-      if (!projectSaved) {
-        const error = new Error('The project has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(projectSaved, 'project');
+
       res
         .status(201)
         .json({ message: 'project created!', Project: projectSaved });
@@ -92,17 +89,6 @@ exports.findByFilter = (req, res, next) => {
   utils.cleanObject(filter);
 
   return Project.find(filter)
-    .then((projects) => {
-      if (projects !== undefined) {
-        res.status(200).json({
-          message: 'Projects has been fetched successfully.',
-          projects,
-        });
-        return projects;
-      }
-      const error = new Error('Something went wrong...');
-      error.statusCode = 404;
-      throw error;
-    })
+    .then((projects) => utils.checkFilteredData(projects, res, 'projects'))
     .catch((err) => utils.errorHandler(err, res, next));
 };

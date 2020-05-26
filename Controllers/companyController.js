@@ -2,7 +2,7 @@ const Company = require('../Models/company');
 const Project = require('../Models/project');
 const utils = require('../Util/utils');
 
-module.exports.getCompany = (req, res, next) => {
+module.exports.getCompanyById = (req, res, next) => {
   const { companyId } = req.params;
 
   utils.checkIfIdIsValid(companyId, res, next);
@@ -30,11 +30,7 @@ exports.addCompany = (req, res, next) => {
   return company
     .save()
     .then((companySaved) => {
-      if (!companySaved) {
-        const error = new Error('The company has not been created');
-        error.statusCode = 500;
-        throw error;
-      }
+      utils.checkSavedData(companySaved, 'company');
 
       res
         .status(201)
@@ -59,7 +55,7 @@ exports.updateCompany = (req, res, next) => {
       return company.save();
     })
     .then((result) => {
-      res.status(201).json({ message: 'Company updated!', company: result });
+      res.status(200).json({ message: 'Company updated!', company: result });
       return result;
     })
     .catch((err) => {

@@ -8,6 +8,7 @@
     "func-names": "off",
     "consistent-return": "warn",
     "no-param-reassign": "off",
-    "no-underscore-dangle": "warn"
+    "no-underscore-dangle": "warn",
+    "prefer-promise-reject-errors": "warn"
   }
 }

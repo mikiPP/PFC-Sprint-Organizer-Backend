@@ -1,24 +1,35 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
+const isAuth = require('./middleware/isAuth');
 
+const authRoutes = require('./Routes/authRoutes');
 const companyRoutes = require('./Routes/companyRoutes');
 const projectRoutes = require('./Routes/projectRoutes');
 const taskRoutes = require('./Routes/taskRoutes');
 const statusRoutes = require('./Routes/statusRoutes');
 const employeeRoutes = require('./Routes/employeeRoutes');
 const sprintRoutes = require('./Routes/sprintRoutes');
+const imputationRoutes = require('./Routes/imputationRoutes');
+const permissionRoutes = require('./Routes/permissionRoutes');
+const roleRoutes = require('./Routes/roleRoutes');
 
 const app = express();
 
+app.use(helmet());
 app.use(bodyParser.json());
 
-app.use('/company', companyRoutes, bodyParser);
-app.use('/project', projectRoutes, bodyParser);
-app.use('/task', taskRoutes, bodyParser);
-app.use('/status', statusRoutes, bodyParser);
-app.use('/employee', employeeRoutes, bodyParser);
-app.use('/sprint', sprintRoutes, bodyParser);
+app.use('/auth', authRoutes);
+app.use('/company', isAuth, companyRoutes, bodyParser);
+app.use('/project', isAuth, projectRoutes, bodyParser);
+app.use('/task', isAuth, taskRoutes, bodyParser);
+app.use('/status', isAuth, statusRoutes, bodyParser);
+app.use('/employee', isAuth, employeeRoutes, bodyParser);
+app.use('/sprint', isAuth, sprintRoutes, bodyParser);
+app.use('/imputation', isAuth, imputationRoutes, bodyParser);
+app.use('/permission', isAuth, permissionRoutes, bodyParser);
+app.use('/role', isAuth, roleRoutes, bodyParser);
 
 app.use((req, res, next) => {
   res.setHeader('Acess-Controll-Allow-Origin', '*');
@@ -43,10 +54,10 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    'mongodb+srv://node:XGeSsA5LgqKV8%23D@cluster0-zpnkm.mongodb.net/test?retryWrites=true&w=majority',
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-zpnkm.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
-    app.listen(8080);
+    app.listen(process.env.PORT || 8080);
   })
   .catch((err) => console.error(err));

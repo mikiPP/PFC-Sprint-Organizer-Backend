@@ -10,7 +10,7 @@ router.post('/', sprintController.addSprint);
 
 router.post('/filter', sprintController.findByFilter);
 
-router.post('/:sprintId', sprintController.updateSprint);
+router.put('/:sprintId', sprintController.updateSprint);
 
 router.delete('/:sprintId', sprintController.deleteSprint);
 

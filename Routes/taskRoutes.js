@@ -10,7 +10,7 @@ router.post('/', taskController.addTask);
 
 router.post('/filter', taskController.findByFilter);
 
-router.post('/:taskId', taskController.updateTask);
+router.put('/:taskId', taskController.updateTask);
 
 router.delete('/:taskId', taskController.deleteTask);
 

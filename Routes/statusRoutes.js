@@ -10,7 +10,7 @@ router.post('/', statusController.addStatus);
 
 router.post('/filter', statusController.findByFilter);
 
-router.post('/:statusId', statusController.updateStatus);
+router.put('/:statusId', statusController.updateStatus);
 
 router.delete('/:statusId', statusController.deleteStatus);
 

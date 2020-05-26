@@ -10,7 +10,7 @@ router.post('/', employeeController.addEmployee);
 
 router.post('/filter', employeeController.findByFilter);
 
-router.post('/:employeeId', employeeController.updateEmployee);
+router.put('/:employeeId', employeeController.updateEmployee);
 
 router.delete('/:employeeId', employeeController.deleteEmployee);
 

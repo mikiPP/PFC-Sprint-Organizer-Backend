@@ -2,53 +2,75 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const employeeSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
+const employeeSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
 
-  surnames: {
-    type: String,
-  },
+    email: {
+      type: String,
+      required: true,
+    },
 
-  birthDay: {
-    type: Date,
-  },
+    surnames: {
+      type: String,
+    },
 
-  password: {
-    type: String,
-    required: true,
-  },
+    birthDay: {
+      type: Date,
+    },
 
-  //   rol{
-  //       type:
-  //   }
+    password: {
+      type: String,
+      required: true,
+    },
 
-  profile: {
-    type: String,
-    required: true,
-  },
+    roleId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Role',
+    },
 
-  vacationDays: {
-    type: Number,
-    default: 23,
-  },
+    projects: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Project',
+      },
+    ],
 
-  hoursDay: {
-    type: Number,
-    default: 8,
-  },
+    companyId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Company',
+      required: true,
+    },
 
-  hoursWeek: {
-    type: Number,
-    default: 40,
-  },
+    profile: {
+      type: String,
+      required: true,
+    },
 
-  disabled: {
-    type: Boolean,
-    default: false,
+    vacationDays: {
+      type: Number,
+      default: 23,
+    },
+
+    hoursDay: {
+      type: Number,
+      default: 8,
+    },
+
+    hoursWeek: {
+      type: Number,
+      default: 40,
+    },
+
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
-});
+  { timestamps: true }
+);
 
 module.exports = mongoose.model('Employee', employeeSchema);
