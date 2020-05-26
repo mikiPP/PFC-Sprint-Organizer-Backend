@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 const isAuth = require('./middleware/isAuth');
 
 const authRoutes = require('./Routes/authRoutes');
@@ -16,6 +17,7 @@ const roleRoutes = require('./Routes/roleRoutes');
 
 const app = express();
 
+app.use(helmet());
 app.use(bodyParser.json());
 
 app.use('/auth', authRoutes);
@@ -52,10 +54,10 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(
-    'mongodb+srv://node:XGeSsA5LgqKV8%23D@cluster0-zpnkm.mongodb.net/test?retryWrites=true&w=majority',
+    `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-zpnkm.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
-    app.listen(8080);
+    app.listen(process.env.PORT || 8080);
   })
   .catch((err) => console.error(err));

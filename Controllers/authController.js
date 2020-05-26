@@ -47,7 +47,7 @@ exports.login = (req, res, next) => {
             name: loadedUser.name,
             companyId: loadedUser.companyId,
           },
-          'dWJcaHVt5wOGCmxGAbt3ApKNcE47i4Hz5ESTjvRFXQ9smeFUWXFpWmJMUP3yXWh',
+          process.env.SECRET,
           {
             expiresIn: '8h',
           }
