@@ -17,21 +17,15 @@ router.post(
           }
         });
       })
-      .matches(
-        /"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"/
-      )
+      .matches(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/)
       .withMessage('Please introduce a valid email'),
-    check('password').custom((value, { req }) => {
-      if (
-        !/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/.test(
-          value
-        )
-      ) {
-        return Promise.reject(
-          'Password must have: 1- 8 characters or more and at least 1 upperCase, 1 loweCase, 1 number'
-        );
-      }
-    }),
+    check('password')
+      .matches(
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,15}$/
+      )
+      .withMessage(
+        'Password must have: 1- 8 characters or more and at least 1 upperCase, 1 loweCase, 1 number'
+      ),
   ],
   authController.signUp
 );
