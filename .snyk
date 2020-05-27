@@ -6,3 +6,5 @@ patch:
   SNYK-JS-LODASH-567746:
     - mocha > yargs-unparser > lodash:
         patched: '2020-05-18T19:17:03.419Z'
+    - express-validator > lodash:
+        patched: '2020-05-27T01:50:45.749Z'
