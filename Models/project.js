@@ -10,7 +10,14 @@ const porjectSchema = new Schema(
     },
 
     scrumMaster: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Employee',
+      required: true,
+    },
+
+    productOwner: {
+      type: Schema.Types.ObjectId,
+      ref: 'Employee',
       required: true,
     },
 
