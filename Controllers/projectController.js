@@ -17,10 +17,17 @@ exports.getProjectById = (req, res, next) => {
 exports.addProject = (req, res, next) => {
   const { name } = req.body;
   const { scrumMaster } = req.body;
+  const { productOwner } = req.body;
   const { disabled } = req.body;
   const { companyId } = req.body;
 
-  const project = new Project({ name, scrumMaster, disabled, companyId });
+  const project = new Project({
+    name,
+    scrumMaster,
+    productOwner,
+    disabled,
+    companyId,
+  });
 
   utils.cleanObject(project);
 
@@ -42,6 +49,7 @@ exports.updateProject = (req, res, next) => {
 
   const { name } = req.body;
   const { scrumMaster } = req.body;
+  const { productOwner } = req.body;
   const { disabled } = req.body;
   const { companyId } = req.body;
 
@@ -51,6 +59,7 @@ exports.updateProject = (req, res, next) => {
       utils.checkNotFound(project, projectId, 'project');
       project.name = name || project.name;
       project.scrumMaster = scrumMaster || project.scrumMaster;
+      project.productOwner = productOwner || project.productOwner;
       project.disabled = disabled || project.disabled;
       project.companyId = companyId || project.companyId;
 
@@ -81,11 +90,12 @@ exports.deleteProject = (req, res, next) => {
 
 exports.findByFilter = (req, res, next) => {
   const { name } = req.body;
-  const { scrumMaster } = req.body ? req.body : null;
+  const { scrumMaster } = req.body;
+  const { productOwner } = req.body;
   const { disabled } = req.body;
   const { companyId } = req.body;
 
-  const filter = { name, scrumMaster, disabled, companyId };
+  const filter = { name, scrumMaster, productOwner, disabled, companyId };
   utils.cleanObject(filter);
 
   return Project.find(filter)
