@@ -48,7 +48,7 @@ exports.addSprint = (req, res, next) => {
 
       res
         .status(201)
-        .json({ message: 'Sprint has been created', spirnt: sprintSaved });
+        .json({ message: 'Sprint has been created', sprint: sprintSaved });
       return sprintSaved;
     })
     .catch((err) => utils.errorHandler(err, res, next));
