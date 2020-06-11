@@ -2,8 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-const https = require('https');
-const fs = require('fs');
+// const https = require('https');
+// const fs = require('fs');
 
 const isAuth = require('./middleware/isAuth');
 const authRoutes = require('./Routes/authRoutes');
@@ -39,7 +39,10 @@ app.use((req, res, next) => {
     'Acess-Controll-Allow-Methods',
     'GET, POST, PUT, PATCH, DELETE'
   );
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
   next();
 });
 
@@ -54,8 +57,8 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message, data });
 });
 
-const privateKey = fs.readFileSync('server.key');
-const certificate = fs.readFileSync('server.cert');
+// const privateKey = fs.readFileSync('server.key');
+// const certificate = fs.readFileSync('server.cert');
 
 mongoose
   .connect(
@@ -63,8 +66,9 @@ mongoose
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
-    https
-      .createServer({ key: privateKey, cert: certificate }, app)
-      .listen(process.env.PORT || 8080);
+    // https
+    //   .createServer({ key: privateKey, cert: certificate }, app)
+    //   .listen(process.env.PORT || 8080);
+    app.listen(process.env.PORT || 8080);
   })
   .catch((err) => console.error(err));
