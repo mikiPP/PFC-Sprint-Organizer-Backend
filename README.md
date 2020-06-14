@@ -69,9 +69,16 @@ El prototipo puede ser una parte final de la aplicación o ser desechado.
 ### Diagrama de Gantt
 
 Antes: 
+  <img src="./readmeImages/diagramaGantt.png"
+     alt="GanntBefore"
+      />
 
 
 Despues: 
+
+<img src="./readmeImages/diagramaGanttDespues.PNG"
+     alt="GanntAfter"
+      />
 
 
 Análisis de las diferencias de tiempo:
