@@ -42,10 +42,19 @@
 
     Aquí podemos ver en forma de esquema como va a funcionar nuestra arquitectura de 3 capas.
     
+     <img src="./readmeImages/capas.png"
+     alt="Capas"
+      />
+      <small>fig 1.</small>
+    
+    
   2. Diagrama de componentes:
 
 
-
+ <img src="./readmeImages/diagramaComponentes.PNG"
+     alt="Diagrama de componentes"
+          />
+          <small>fig 2.</small>
 
 
 
@@ -71,7 +80,10 @@ El prototipo puede ser una parte final de la aplicación o ser desechado.
 Antes: 
   <img src="./readmeImages/diagramaGantt.png"
      alt="GanntBefore"
+     style="justify-content: center"
       />
+      <small>fig 3.</small>
+      
 
 
 Despues: 
@@ -79,6 +91,7 @@ Despues:
 <img src="./readmeImages/diagramaGanttDespues.PNG"
      alt="GanntAfter"
       />
+      <small>fig 4.</small>
 
 
 Análisis de las diferencias de tiempo:
@@ -96,7 +109,10 @@ Análisis de las diferencias de tiempo:
 
 ### Clockify
 
-Imagen
+<img src="./readmeImages/diagramaGanttDespues.PNG"
+     alt="Clockify"
+      />
+      <small>fig 5.</small>
 
 
 
@@ -108,8 +124,9 @@ Imagen
     1. Atlas: En caso que la aplicación creciera, habría que pagar la licencia de  "dedicated Clusters" por unos 50,74 € al mes.
     2. Heroku: Para el uso de producción habría que pasar al modelo hobby, que cuesta 6,23€ al mes.
     
-    Total: 56,97 € * mes
-  
+    
+     <strong> Total: 56,97 € * mes </strong>
+   
   - Coste desarrollo:
     
     1. Horas de análisis 15€ * 14h = 60 €
@@ -118,7 +135,8 @@ Imagen
     4. Horas de desarrollo 8€ * 101h = 808 €
     5. Horas de despliegue 8€ * 8h  = 64 €
     
-    Total: 1.126€
+    
+    <strong> Total: 1.126€ </strong>
 
 
 ### Conclusiones
