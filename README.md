@@ -74,6 +74,9 @@ El prototipo puede ser una parte final de la aplicación o ser desechado.
   
   - Panel Kanban: El tablero Kanban es la herramienta para mapear y visualizar su flujo de trabajo y uno de los componentes claves del método Kanban. Se divide en filas y  columnas.Las columnas visualizan una fase de su proceso y las filas representan diferentes tipos de actividades específicas (diseño, errores, deuda técnica, etc.).
  
+ 
+ - Git: La forma de trabajar en git es, crear un issue en git, luego en la rama de develop crear la rama correspondiente para 
+ hacer o arreglar el fix.Hacer merge con Develop, y luego en master hacer pr desde develop.
 
 ### Diagrama de Gantt
 
