@@ -107,16 +107,18 @@ Imagen
   - Costes mensuales:
     1. Atlas: En caso que la aplicación creciera, habría que pagar la licencia de  "dedicated Clusters" por unos 50,74 € al mes.
     2. Heroku: Para el uso de producción habría que pasar al modelo hobby, que cuesta 6,23€ al mes.
+    
     Total: 56,97 € * mes
   
   - Coste desarrollo:
     
-    1. Horas de análisis x€ * 14h
-    2. Horas de testing x€ * 18h
-    3. Horas de documentación x€ * 10h
-    4. Horas de desarrollo x€ * 101h
-    5. Horas de despliegue x€ * 8h 
-    Total: 
+    1. Horas de análisis 15€ * 14h = 60 €
+    2. Horas de testing 8€ * 18h = 144 €
+    3. Horas de documentación 5€ * 10h = 50 €
+    4. Horas de desarrollo 8€ * 101h = 808 €
+    5. Horas de despliegue 8€ * 8h  = 64 €
+    
+    Total: 1.126€
 
 
 ### Conclusiones
