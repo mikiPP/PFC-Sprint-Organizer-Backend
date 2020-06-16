@@ -50,12 +50,20 @@
     
   2. Diagrama de componentes:
 
+   - Front:
 
- <img src="./readmeImages/diagramaComponentes.PNG"
+ <img src="./readmeImages/DiagramaFront.png"
      alt="Diagrama de componentes"
           />
           <small>fig 2.</small>
 
+
+   - Backend: 
+
+ <img src="./readmeImages/DiagramaBackend.png"
+     alt="Diagrama de componentes"
+          />
+          <small>fig 3.</small>
 
 
 ### Metodología de desarrollo
@@ -85,7 +93,7 @@ Antes:
      alt="GanntBefore"
      style="justify-content: center"
       />
-      <small>fig 3.</small>
+      <small>fig 4.</small>
       
 
 
@@ -94,7 +102,7 @@ Despues:
 <img src="./readmeImages/diagramaGanttDespues.PNG"
      alt="GanntAfter"
       />
-      <small>fig 4.</small>
+      <small>fig 5.</small>
 
 
 Análisis de las diferencias de tiempo:
@@ -115,7 +123,7 @@ Análisis de las diferencias de tiempo:
 <img src="./readmeImages/diagramaGanttDespues.PNG"
      alt="Clockify"
       />
-      <small>fig 5.</small>
+      <small>fig 6.</small>
 
 
 
@@ -132,14 +140,14 @@ Análisis de las diferencias de tiempo:
    
   - Coste desarrollo:
     
-    1. Horas de análisis 15€ * 14h = 60 €
-    2. Horas de testing 8€ * 18h = 144 €
-    3. Horas de documentación 5€ * 10h = 50 €
-    4. Horas de desarrollo 8€ * 101h = 808 €
-    5. Horas de despliegue 8€ * 8h  = 64 €
+    1. Horas de análisis 25€ * 14h = 350 €
+    2. Horas de testing 18€ * 18h = 324 €
+    3. Horas de documentación 15€ * 10h = 150 €
+    4. Horas de desarrollo 18€ * 101h = 1818 €
+    5. Horas de despliegue 18€ * 8h  = 144 €
     
     
-    <strong> Total: 1.126€ </strong>
+    <strong> Total: 2.786€ </strong>
 
 
 ### Conclusiones
