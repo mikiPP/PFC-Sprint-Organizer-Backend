@@ -22,16 +22,29 @@ const app = express();
 app.use(helmet());
 app.use(bodyParser.json());
 
-app.use('/auth', authRoutes);
-app.use('/company', isAuth, companyRoutes, bodyParser);
-app.use('/project', isAuth, projectRoutes, bodyParser);
-app.use('/task', isAuth, taskRoutes, bodyParser);
-app.use('/status', isAuth, statusRoutes, bodyParser);
-app.use('/employee', isAuth, employeeRoutes, bodyParser);
-app.use('/sprint', isAuth, sprintRoutes, bodyParser);
-app.use('/imputation', isAuth, imputationRoutes, bodyParser);
-app.use('/permission', isAuth, permissionRoutes, bodyParser);
-app.use('/role', isAuth, roleRoutes, bodyParser);
+const BASE_PATH = '/api';
+
+app.use(`${BASE_PATH}/auth`, authRoutes);
+app.use(`${BASE_PATH}/company`, isAuth, companyRoutes, bodyParser);
+app.use(`${BASE_PATH}/project`, isAuth, projectRoutes, bodyParser);
+app.use(`${BASE_PATH}/task`, isAuth, taskRoutes, bodyParser);
+app.use(`${BASE_PATH}/status`, isAuth, statusRoutes, bodyParser);
+app.use(`${BASE_PATH}/employee`, isAuth, employeeRoutes, bodyParser);
+app.use(`${BASE_PATH}/sprint`, isAuth, sprintRoutes, bodyParser);
+app.use(`${BASE_PATH}/imputation`, isAuth, imputationRoutes, bodyParser);
+app.use(`${BASE_PATH}/permission`, isAuth, permissionRoutes, bodyParser);
+app.use(`${BASE_PATH}/role`, isAuth, roleRoutes, bodyParser);
+
+// app.use(`/auth`, authRoutes);
+// app.use('/company', isAuth, companyRoutes, bodyParser);
+// app.use('/project', isAuth, projectRoutes, bodyParser);
+// app.use('/task', isAuth, taskRoutes, bodyParser);
+// app.use('/status', isAuth, statusRoutes, bodyParser);
+// app.use('/employee', isAuth, employeeRoutes, bodyParser);
+// app.use('/sprint', isAuth, sprintRoutes, bodyParser);
+// app.use('/imputation', isAuth, imputationRoutes, bodyParser);
+// app.use('/permission', isAuth, permissionRoutes, bodyParser);
+// app.use('/role', isAuth, roleRoutes, bodyParser);
 
 app.use((req, res, next) => {
   res.setHeader('Acess-Controll-Allow-Origin', '*');
@@ -46,9 +59,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/company', companyRoutes);
-app.use('/project', projectRoutes);
-
 app.use((error, req, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
@@ -57,18 +67,12 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message, data });
 });
 
-// const privateKey = fs.readFileSync('server.key');
-// const certificate = fs.readFileSync('server.cert');
-
 mongoose
   .connect(
     `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0-zpnkm.mongodb.net/${process.env.MONGO_DEFAULT_DATABASE}?retryWrites=true&w=majority`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
-    // https
-    //   .createServer({ key: privateKey, cert: certificate }, app)
-    //   .listen(process.env.PORT || 8080);
     app.listen(process.env.PORT || 8080);
   })
   .catch((err) => console.error(err));
