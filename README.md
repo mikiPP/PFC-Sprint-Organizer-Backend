@@ -52,7 +52,7 @@
 
     - Front:
 
- <img src="./readmeImages/diagramaFront.png"
+ <img src="./readmeImages/DiagramaFront.png"
      alt="Diagrama de componentes"
           />
           <small>fig 2.</small>
@@ -60,7 +60,7 @@
 
     - Backend: 
 
- <img src="./readmeImages/diagramaBackend.png"
+ <img src="./readmeImages/DiagramaBackend.png"
      alt="Diagrama de componentes"
           />
           <small>fig 3.</small>
