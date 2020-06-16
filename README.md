@@ -50,12 +50,20 @@
     
   2. Diagrama de componentes:
 
+    - Front:
 
- <img src="./readmeImages/diagramaComponentes.PNG"
+ <img src="./readmeImages/diagramaFront.png"
      alt="Diagrama de componentes"
           />
           <small>fig 2.</small>
 
+
+    - Backend: 
+
+ <img src="./readmeImages/diagramaBackend.png"
+     alt="Diagrama de componentes"
+          />
+          <small>fig 3.</small>
 
 
 ### Metodología de desarrollo
@@ -85,7 +93,7 @@ Antes:
      alt="GanntBefore"
      style="justify-content: center"
       />
-      <small>fig 3.</small>
+      <small>fig 4.</small>
       
 
 
@@ -94,7 +102,7 @@ Despues:
 <img src="./readmeImages/diagramaGanttDespues.PNG"
      alt="GanntAfter"
       />
-      <small>fig 4.</small>
+      <small>fig 5.</small>
 
 
 Análisis de las diferencias de tiempo:
@@ -115,7 +123,7 @@ Análisis de las diferencias de tiempo:
 <img src="./readmeImages/diagramaGanttDespues.PNG"
      alt="Clockify"
       />
-      <small>fig 5.</small>
+      <small>fig 6.</small>
 
 
 
