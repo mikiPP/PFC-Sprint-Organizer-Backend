@@ -29,7 +29,7 @@
     "express-validator": "^6.5.0",
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
-    "mocha": "^7.1.2",
+    "mocha": "^10.1.0",
     "mongodb": "^3.5.7",
     "mongoose": "^5.9.13",
     "sinon": "^9.0.2",
